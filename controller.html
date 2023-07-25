@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<body>
+    <h1>Scoreboard Controller</h1>
+    <form>
+        <div id="Player1">
+            <label>Player 1:</label>
+            <input type="text" id="p1Sponsor" name="p1Sponsor" placeholder="Sponsor" style="width: 80px">
+            <input type="text" id="p1Name" name="p1Name">
+            <input type="number" min="0" value="0" id="p1Score" style="width: 35px; height: 20px;">
+
+            <br>
+
+            <label id="p1detailTxt" style="font-size: 12px" onclick="p1Toggle()">➤Details:</label>
+            <fieldset style="width: 300px" id="p1detail">
+                <label>Twitter:</label>
+                <input type="text" id="p1Twitter" style="width: 150px">
+                <label>Flag:</label>
+                <input id="p1Flag" list="Flags" style="width: 40px">
+                <datalist id="Flags" style="display: none">
+                    <option value="NSW">New South Wales</option>
+                    <option value="VIC">Victoria</option>
+                    <option value="SA">South Australia</option>
+                    <option value="QLD">Queensland</option>
+                    <option value="WA">Western Australia</option>
+                    <option value="TAS">Tasmania</option>
+                    <option value="NT">Northern Territories</option>
+                    <option value="ACT">Australian Capital Territory</option>
+                    <option value="AUS">Australia</option>
+                    <option value="NZ">New Zealand</option>
+                    <option value="NC">New Caledonia</option>
+                    <option value="JPN">Japan</option>
+                    <option value="USA">United States</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="KOR">South Korea</option>
+                    <option value="SAU">Saudi Arabia</option>
+                    <option value="SGP">Singapore</option>
+                    <option value="MY">Malaysia</option>
+                    <option value="TH">Thailand</option>
+                    <option value="CHN">China</option>
+                    <option value="FJI">Fiji</option>
+                    <option value="WSM">Samoa</option>
+                    <option value="MEX">Mexico</option>
+                    <option value="CAN">Canada</option>
+                    <option value="ISR">Israel</option>
+                    <option value="HKG">Hong Kong</option>
+                    <option value="TW">Taiwan</option>
+                    <option value="IDN">Indonesia</option>
+                    <option value="PAK">Pakistan</option>
+                    <option value="IND">India</option>
+                </datalist>
+                <input type="image" width="12" height="12" alt="">
+                <br>
+
+                <label>Twitch:</label>
+                <input type="text" id="p1Twitch" style="width: 125px">
+
+                <br>
+
+                <label>Pronoun:</label>
+                <select id="p1Pronoun">
+                    <option value="he/him">He/Him</option>
+                    <option value="she/her">She/Her</option>
+                    <option value="they/them">They/Them</option>
+                </select>
+            </fieldset>
+        </div>
+
+        <br>
+        
+        <div>
+            <label>Player 2:</label>
+            <input type="text" id="p2Sponsor" name="p2Sponsor" placeholder="Sponsor" style="width: 80px">
+            <input type="text" id="p2Name" name="p2Name">
+            <input type="number" min="0" value="0" id="p2Score" style="width: 35px; height: 20px;">
+        </div>
+
+        <label id="p2detailTxt" style="font-size: 12px" onclick="p2Toggle()">➤Details:</label>
+        <fieldset style="width: 300px" id="p2detail">
+            <label>Twitter:</label>
+            <input type="text" id="p2Twitter" style="width: 150px">
+            <label>Flag:</label>
+            <input id="p2Flag" list="Flags" style="text-align: right; width: 40px">
+            <input type="image" width="12" height="12" alt="">
+            <br>
+            
+            <label>Twitch:</label>
+            <input type="text" id="p2Twitch">
+
+            <br>
+
+            <label>Pronoun:</label>
+            <select id="p2Pronoun">
+                <option value="he/him">He/Him</option>
+                <option value="she/her">She/Her</option>
+                <option value="they/them">They/Them</option>
+            </select>
+        </fieldset>
+
+        <br>
+        
+        <div>
+            <button type="button" onclick="playerSwap()" value="Swap">Swap</button>
+            <button type="button" onclick="playerReset()">Clear</button>
+        </div>
+    </form>
+
+    <style>
+        form {
+            font-family: arial;
+        }
+
+        #p1detail {
+            font-size: 12px;
+            display: block;
+        }
+
+        #p2detail {
+            font-size: 12px;
+            display: block;
+        }
+        
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> 
+
+    <script>
+
+        function toggleDetail(string) {
+            if ($(string).css("display") == "none") {
+                $(string + "Txt").text("⮟Details:");
+                $(string).css("display", "block");
+            } else {
+                $(string + "Txt").text("➤Details:");
+                $(string).css("display", "none");
+            }
+            
+        }
+
+        function p1Toggle() {
+            toggleDetail("#p1detail");
+        }
+
+        function p2Toggle() {
+            toggleDetail("#p2detail");
+        }
+
+        function playerReset() {
+
+            reset("#p1Sponsor");
+            reset("#p1Name");
+            reset("#p2Sponsor");
+            reset("#p2Name");
+            $('#p1Score').val(0);
+            $('#p2Score').val(0);
+            
+            function reset(string) {
+                $(string).val($(string).defaultValue);
+            }
+        }
+
+        function playerSwap() {
+
+            swap("#p1Sponsor", "#p2Sponsor");
+            swap("#p1Name", "#p2Name");
+            swap("#p1Score", "#p2Score");
+
+            function swap(string1, string2) {
+                var temp = $(string1).val();
+                $(string1).val($(string2).val());
+                $(string2).val(temp);
+            }
+        }
+    </script>
+</body>
