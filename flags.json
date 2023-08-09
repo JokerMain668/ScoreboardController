@@ -5,7 +5,7 @@
     {"Code": "SA", "Name": "South Australia", "img": "au-sa"},
     {"Code": "WA", "Name": "Western Australia", "img": "au-wa"},
     {"Code": "TAS", "Name": "Tasmania", "img": "au-tas"},
-    {"Code": "ACT", "Name": "Australian Caital Territories", "img": "au-act"},
+    {"Code": "ACT", "Name": "Australian Capital Territories", "img": "au-act"},
     {"Code": "NT", "Name": "Northern Territories", "img": "au-nt"},
     {"Code": "AUS", "Name": "Australia", "img": "au"},
     {"Code": "NZ", "Name": "New Zealand", "img": "nz"},
