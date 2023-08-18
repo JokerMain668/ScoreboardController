@@ -23,7 +23,7 @@
     {"Code": "WSM", "Name": "Samoa", "img": "ws"},
     {"Code": "MEX", "Name": "Mexico", "img": "mx"},
     {"Code": "CAN", "Name": "Canada", "img": "ca"},
-    {"Code": "ISR", "Name": "Israel", "img": "is"},
+    {"Code": "ISR", "Name": "Israel", "img": "il"},
     {"Code": "HK", "Name": "Hong Kong", "img": "hk"},
     {"Code": "TW", "Name": "Taiwan", "img": "tw"},
     {"Code": "IDN", "Name": "Indonesia", "img": "id"},
@@ -31,5 +31,6 @@
     {"Code": "IND", "Name": "India", "img": "in"},
     {"Code": "BGD", "Name": "Bangladesh", "img": "bd"},
     {"Code": "PHL", "Name": "Philippines", "img": "ph"},
-    {"Code": "VN", "Name": "Vietnam", "img": "vn"}
+    {"Code": "VN", "Name": "Vietnam", "img": "vn"},
+    {"Code": "FRA", "Name": "France", "img": "fr"}
 ]
