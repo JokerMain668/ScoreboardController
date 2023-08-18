@@ -17,7 +17,7 @@
                 <label>Flag:</label>
                 <input id="p1Flag" list="Flags" style="width: 60px" onchange="p1FlagChange()">
                 <datalist id="Flags" style="display: none"></datalist>
-                <input id="p1Flagimg" type="image" width="20" height="20" alt="" src="img/au-nsw.svg" style="margin: -5px 0px; pointer-events: none; cursor: default">
+                <input id="p1Flagimg" type="image" width="20" height="20" alt="" style="margin: -5px 0px; pointer-events: none; cursor: default">
                 <br>
 
                 <label>Twitch:</label>
@@ -31,6 +31,13 @@
                     <option value="she/her">She/Her</option>
                     <option value="they/them">They/Them</option>
                 </select>
+                <label>Characters:</label>
+                <select id="p1Char" onchange="p1CharChange()">
+                    <option value="Sol">Sol</option>
+                    <option value="Ky">Ky</option>
+                    <option value="May">May</option>
+                </select>
+                <input id="p1Charimg" type="image" width="20" height="20" alt="" src="img/ggst/sol.jpg" style="margin: -5px 0px; pointer-events: none; cursor: default">
             </fieldset>
         </div>
 
@@ -49,7 +56,7 @@
             <input type="text" id="p2Twitter" style="width: 150px">
             <label>Flag:</label>
             <input id="p2Flag" list="Flags" style="width: 60px" onchange="p2FlagChange()">
-            <input id="p2Flagimg" type="image" width="20" height="20" alt="" src="img/au-vic.svg" style="margin: -5px 0px; pointer-events: none; cursor: default">
+            <input id="p2Flagimg" type="image" width="20" height="20" alt="" style="margin: -5px 0px; pointer-events: none; cursor: default">
             <br>
             
             <label>Twitch:</label>
@@ -63,6 +70,7 @@
                 <option value="she/her">She/Her</option>
                 <option value="they/them">They/Them</option>
             </select>
+            <label>Characters:</label>
         </fieldset>
 
         <br>
@@ -87,13 +95,13 @@
             font-size: 12px;
             display: block;
         }
-        
     </style>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
     <script>
         var scObj;
+        var ggst;
         window.onload = function() {
             
             var xhr = new XMLHttpRequest();
@@ -123,8 +131,10 @@
             var value = $('#p1Flag').val();
             for (var i = 0; i < scObj.length; i++) {
                 if (scObj[i]["Code"] == value) {
-                    $('#p1Flagimg').attr('src', 'img/' + scObj[i]["img"] + '.svg');
+                    $('#p1Flagimg').attr('src', 'img/flags/' + scObj[i]["img"] + '.svg');
+                    break;
                 }
+                $('#p1Flagimg').attr('src', '');
             }
         }
 
@@ -132,9 +142,17 @@
             var value = $('#p2Flag').val();
             for (var i = 0; i < scObj.length; i++) {
                 if (scObj[i]["Code"] == value) {
-                    $('#p2Flagimg').attr('src', 'img/' + scObj[i]["img"] + '.svg');
+                    $('#p2Flagimg').attr('src', 'img/flags/' + scObj[i]["img"] + '.svg');
+                    break;
                 }
+                $('#p2Flagimg').attr('src', '');
             }
+        }
+
+        function p1CharChange() {
+            var value = $('#p1Char').val();
+            console.log(value);
+            $('#p1Charimg').attr('src', 'img/ggst/' + value + '.jpg');
         }
 
         function toggleDetail(string) {
