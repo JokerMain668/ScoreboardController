@@ -1,0 +1,120 @@
+@font-face {
+    font-family: 'Bebas Neue';
+    src: url(../fonts/BebasNeue.otf);
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    src: url(../fonts/Gilroy-ExtraBold.otf);
+}
+
+@font-face {
+    font-family: 'Noto';
+    src: url(../fonts/NotoSansDisplay-CondensedSemiBold.ttf);
+}
+
+@font-face {
+    font-family: 'Noto';
+    src: url(../fonts//NotoSansJP-Medium.otf);
+    unicode-range: U+3000-9FFF;
+}
+
+html {
+    margin: 0rem;
+    font-size: 1px;
+    background-color: #333333;
+    color: white;
+    font-family: 'Noto';
+}
+
+p {
+    font-size: 14rem;
+}
+
+button, input, select {
+    font-family: 'Noto';
+    font-size: 10rem;
+    margin: 2rem;
+    height: 30rem;
+}
+
+button {
+    margin: 2rem;
+    height: 30rem;
+}
+
+.label {
+    font-size: 14rem;
+    font-family: 'Noto';
+    margin-right: 10rem;
+}
+
+.startggIcon {
+    background: url(../img/startgg.svg);
+    height: 14rem;
+    width: 21rem;
+    display: inline-block;
+    filter: grayscale(100%);
+}
+
+.topHeading {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 482rem;
+}
+
+.horiLayout {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.vertLayout {
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-accordion {
+    font-family: 'Noto';
+    font-size: 14rem;
+    max-width: 490rem;
+}
+
+.ui-accordion-content {
+    border-color: black;
+}
+
+.ui-accordion-header-active {
+    background-color: #ffcffa;
+    flex-grow: 4;
+    min-width: 450rem;
+    color: black;
+}
+
+.ui-tooltip {
+    font-family: 'Noto';
+    font-size: 14rem;
+    max-width: 300px;
+    background: #333333;
+    color: white;
+}
+
+.ui-button {
+    font-size: 18rem;
+}
+
+#lssc-panels {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.countryFlag {
+    margin: auto;
+    pointer-events: none;
+    cursor: default;
+    opacity: 0;
+}

@@ -1,0 +1,269 @@
+<html>
+<head>
+    <title>MegaLAN T3 Overlay Helper</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="scripts/panel.css">    
+    <link rel="stylesheet" href="font-awesome/css/all.css" type="text/css" charset="utf-8">
+    <script>
+        function init() {
+            // Apply accordion class from JQuery UI
+            $(".accordion").accordion({
+                active: false,
+                collapsible: true,
+                heightStyle: "content"
+            });
+
+            // Apply controlgroup class from JQuery UI
+            $(".controlgroup").controlgroup();
+
+            resizeTF();
+
+            $(document).tooltip({
+                content: function() { return $(this).attr('title'); },
+				position: { my: "top-150%", at: "top left" },
+            });
+
+            var xhr = new XMLHttpRequest();
+            var vhr = new XMLHttpRequest();
+
+            xhr.overrideMimeType('application/json');
+            vhr.overrideMimeType('application/json');
+            
+            xhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/flags.json?ref=main');
+            xhr.send();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    scObj = JSON.parse(atob(JSON.parse(xhr.responseText)['content']));
+                    console.log(scObj);
+                    storeDataList();
+                }
+            }
+
+            
+
+            function storeDataList() {
+                for (var i = 0; i < scObj.length; i++) {
+                    var code = scObj[i]["Code"];
+                    var name = scObj[i]["Name"];
+
+                    $('#Flags').append(`<option value="${code}">${name}</option>`);
+                }
+            }
+
+            function charDump() {
+                for (var i = 0; i < ggst.length; i++) {
+                    var name = ggst[i]["Name"];
+
+                    var x = document.getElementById('p1Char');
+                    var y = document.getElementById('p2Char');
+                    var optionx = document.createElement('option');
+                    var optiony = document.createElement('option');
+                    optionx.text = name;
+                    optiony.text = name;
+
+                    x.add(optionx);
+                    y.add(optiony);
+                }
+            }
+        }
+
+        function resizeTF() {
+            // Resize textfields in scoreboard
+            $('#p1Sponsor').autocomplete().width('50rem');
+            $('#p1Name').autocomplete().width('110rem');
+			$('#p1Flag').autocomplete().width('50rem');
+			$('#p2Sponsor').autocomplete().width('50rem');
+			$('#p2Name').autocomplete().width('110rem');
+			$('#p2Flag').autocomplete().width('50rem');
+
+			$( "#p1Score" ).spinner().width('20rem');
+			$( "#p2Score" ).spinner().width('20rem');
+        }
+        
+        function resetVal(string) {
+            string.split(',').forEach(element => {
+                var name = $("#" + element);
+                if (name.hasClass('ui-checkboxradio')) {
+                    name.prop("checked", false).checkboxradio('refresh');
+                }
+                var val = name.hasClass('ui-spinner-input') ? 0 : "";
+                $("#" + element).val(val);
+            });
+        }
+
+        function swapVal(string1, string2) {
+            var p1Arr = string1.split(',');
+            var p2Arr = string2.split(',');
+            for (var i = 0; i < p1Arr.length; i++) {
+                if ($("#" + p1Arr[i]).hasClass('ui-checkboxradio')) {
+                    var p1checked = $("#" + p1Arr[i]).prop("checked");
+                    var p2checked = $("#" + p2Arr[i]).prop("checked");
+                    $("#" + p1Arr[i]).prop("checked", p2checked).checkboxradio('refresh');
+                    $("#" + p2Arr[i]).prop("checked", p1checked).checkboxradio('refresh');
+                } else {
+                    var temp = $("#" + p1Arr[i]).val();
+                    $("#" + p1Arr[i]).val($("#" + p2Arr[i]).val());
+                    $("#" + p2Arr[i]).val(temp);
+                }
+            }
+        }
+
+        function flagChange(string) {
+            var value = $("#" + string).val();
+            for (var i = 0; i < scObj.length; i++) {
+                if (scObj[i]["Code"] == value) {
+                    $('#' + string + 'img').css('opacity', 1);
+                    $('#' + string + 'img').attr('src', 'img/flags/' + scObj[i]["img"] + '.svg');
+                    break;
+                }
+                $('#' + string + 'img').css('opacity', 0);
+                $('#' + string + 'img').attr('src', '');
+            }
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    <div class="topHeading">
+        <!-- Heading buttons -->
+        <div>
+            <button id="save-local" autocomplete="off"><i class="fas fa-upload"></i> Send</button>
+            <button id="reload-local" autocomplete="off"><i class="fas fa-rotate-right"></i>Reload</button>
+            <button id="import" autocomplete="off"><i class="startggIcon"></i>Reload Start.gg</button>
+        </div>
+        <div>
+            <button id="expand-sections" autocomplete="off"><i class="fas fa-maximize"></i>Expand</button>
+            <button id="collpase-sections" autocomplete="off"><i class="fas fa-minimize"></i>Collapse</button>
+        </div>
+    </div>
+    <div id="lssc-panels">
+        <div class="accordion" id="tab1">
+            <h3>Scoreboard</h3>
+            <div class="vertLayout">
+                <div class="horiLayout">
+                    <fieldset>
+                        <legend>Player 1</legend>
+                        <div class="controlgroup horiLayout">
+                            <input class="lssc-input" id="p1Sponsor" title="P1 Sponsor" >
+                            <input class="lssc-input" id="p1Name" title="P1 Name">
+                            <input onchange="flagChange('p1Flag')" class="lssc-input" list="Flags" id="p1Flag" title="P1 Country">
+                            <datalist id="Flags"></datalist>
+                            <img id="p1Flagimg" class="countryFlag" type="image" width="30" height="30" src="img/flags/au-nsw.svg">
+                            <label for="p1LoserMark">L</label>
+                            <input class="lssc-input" id="p1LoserMark" type="checkbox">
+                            <input class="lssc-input" id="p1Score" title="P1 Score" type="spinner" value="0">
+                            <button onclick="resetVal('p1Sponsor,p1Name,p1Country,p1LoserMark,p1Score')" autocomplete="off">Reset</button>
+                            
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="horiLayout">
+                    <fieldset>
+                        <legend>Player 2</legend>
+                        <div class="controlgroup horiLayout">
+                            <input class="lssc-input" id="p2Sponsor" title="P2 Sponsor" >
+                            <input class="lssc-input" id="p2Name" title="P2 Name">
+                            <input onchange="flagChange('p2Flag')" class="lssc-input" list="Flags" id="p2Flag" title="P2 Country">
+                            <img id="p2Flagimg" class="countryFlag" type="image" width="30" height="30" src="img/flags/au-nsw.svg">
+                            <label for="p2LoserMark">L</label>
+                            <input class="lssc-input" id="p2LoserMark" type="checkbox">
+                            <input class="lssc-input" id="p2Score" title="P2 Score" type="spinner" value="0">
+                            <button onclick="resetVal('p2Sponsor,p2Name,p2Country,p2LoserMark,p2Score')" autocomplete="off">Reset</button>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="accordion" id="tab1Details">
+                    <h3>Details</h3>
+                    <div class="vertLayout">
+                        <fieldset>
+                            <legend>Player 1</legend>
+                            <div class="controlgroup vertLayout">
+                                <div class="horiLayout">
+                                    <label for="p1Twitter">Twitter</label>
+                                    <input class="lssc-input" id="p1Twitter" title="P1 Twitter" >
+                                </div>
+                                <div class="horiLayout">
+                                    <label for="p1Char">Character:</label>
+                                    <select class="lssc-input" id="p1Char"></select>
+                                </div>
+                                <div class="horiLayout">
+                                    <label for="p1Pronoun">Pronoun</label>
+                                    <input class="lssc-input" id="p1Pronoun" title="P1 Pronoun" >
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Player 2</legend>
+                            <div class="controlgroup vertLayout">
+                                <div class="horiLayout">
+                                    <label for="p2Twitter">Twitter</label>
+                                    <input class="lssc-input" id="p2Twitter" title="P2 Twitter" >
+                                </div>
+                                <div class="horiLayout">
+                                    <label for="p2Char">Character:</label>
+                                    <select class="lssc-input" id="p2Char"></select>
+                                </div>
+                                <div class="horiLayout">
+                                    <label for="p2Pronoun">Pronoun</label>
+                                    <input class="lssc-input" id="p2Pronoun" title="P2 Pronoun" >
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="horiLayout">
+                    <button class="lssc-input" onclick="swapVal('p1Sponsor,p1Name,p1Country,p1LoserMark,p1Score','p2Sponsor,p2Name,p2Country,p2LoserMark,p2Score')" autocomplete="off">Swap</button>
+                    <button class="lssc-input" onclick="resetVal('p1Sponsor,p1Name,p1Country,p1LoserMark,p1Score,p2Sponsor,p2Name,p2Country,p2LoserMark,p2Score')"autocomplete="off">Reset</button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion" id="tab2">
+            <h3>Game/Stage</h3>
+            <div class="vertLayout">
+                <div class="horiLayout">
+                    <div class="label">Game:</div>
+                    <select class="lssc-input" id="game" dataSet="games" dataField="1" title="Select game being played">
+                        <option>Street Fighter 6</option>
+                        <option>Tekken 7</option>
+                        <option>Guilty Gear: Strive</option>
+                        <option>King of Fighters XV</option>
+                    </select>
+                </div>
+                <div class="horiLayout">
+                    <div class="label">Round:</div>
+
+                    <select class="lssc-input" id="mText2">
+						<option>Casuals</option>
+						<option>Money Match</option>
+						<option>Tournament</option>
+						<option>Exhibition Match</option>
+						<option>Pools</option>
+						<option>Pools (Losers)</option>
+						<option>Winners Side</option>
+						<option>Losers Side</option>
+						<option>Top 8</option>
+						<option>Top 8 (Losers)</option>
+						<option>Winners Final</option>
+						<option>Losers Final</option>
+						<option>Grand Final</option>
+					</select>
+                </div>
+                <div class="horiLayout">
+                    <div class="label">Group:</div>
+                    <select class="lssc-input" id="gameGroup" dataSet="games" preReq="game" dataField="2" title="Actual stage of tournament"></select>
+                </div>
+                <div class="horiLayout">
+                    <div class="label">PhaseId:</div>
+                    <select class="lssc-input" id="phaseId" dataSet="games" preReq="gameGroup" dataField="3" title="Used for bracket viewer" disabled="true"></select>
+                </div>
+                <div class="horiLayout">
+                    <div class="label">Bracket URL:</div>
+                    <input class="lssc-input" id="bracketUrl" dataSet="games" preReq="phaseId" finalVal="true" dataField="start.gg/#FIELD5#/brackets/#FIELD6#/#FIELD3#" token="FIELD" title='Change by "!EditCommand !Bracket -URL-"'>
+                    <button autocomplete='off' >Copy URL</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

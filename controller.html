@@ -7,7 +7,7 @@
             <input type="text" id="p1Sponsor" name="p1Sponsor" placeholder="Sponsor" style="width: 80px">
             <input type="text" id="p1Name" name="p1Name">
             <input type="number" min="0" value="0" id="p1Score" style="width: 35px; height: 20px;">
-
+            <button type="button" onclick="p1Reset()">Reset</button>
             <br>
 
             <label id="p1detailTxt" style="font-size: 12px" onclick="p1Toggle()">➤Details:</label>
@@ -17,7 +17,7 @@
                 <label>Flag:</label>
                 <input id="p1Flag" list="Flags" style="width: 60px" onchange="p1FlagChange()">
                 <datalist id="Flags" style="display: none"></datalist>
-                <input id="p1Flagimg" type="image" width="20" height="20" alt="" style="margin: -5px 0px; pointer-events: none; cursor: default">
+                <input id="p1Flagimg" type="image" width="20" height="20" alt="" style="margin: -5px 0px; pointer-events: none; cursor: default; opacity: 0">
                 <br>
 
                 <label>Twitch:</label>
@@ -32,9 +32,7 @@
                     <option value="they/them">They/Them</option>
                 </select>
                 <label>Characters:</label>
-                <select id="p1Char" onchange="p1CharChange()" list="ggstChars">
-                </select>
-                <datalist id="ggstChars" style="display: none"></datalist>
+                <select id="p1Char" onchange="p1CharChange()">Reset</select>
                 <input id="p1Charimg" type="image" width="20" height="20" alt="" src="img/ggst/sol.jpg" style="margin: -5px 0px; pointer-events: none; cursor: default">
             </fieldset>
         </div>
@@ -46,6 +44,7 @@
             <input type="text" id="p2Sponsor" name="p2Sponsor" placeholder="Sponsor" style="width: 80px">
             <input type="text" id="p2Name" name="p2Name">
             <input type="number" min="0" value="0" id="p2Score" style="width: 35px; height: 20px;">
+            <button type="button" onclick="p2Reset()">Reset</button>
         </div>
 
         <label id="p2detailTxt" style="font-size: 12px" onclick="p2Toggle()">➤Details:</label>
@@ -54,7 +53,7 @@
             <input type="text" id="p2Twitter" style="width: 150px">
             <label>Flag:</label>
             <input id="p2Flag" list="Flags" style="width: 60px" onchange="p2FlagChange()">
-            <input id="p2Flagimg" type="image" width="20" height="20" alt="" style="margin: -5px 0px; pointer-events: none; cursor: default">
+            <input id="p2Flagimg" type="image" width="20" height="20" alt="" style="margin: -5px 0px; pointer-events: none; cursor: default; opacity: 0">
             <br>
             
             <label>Twitch:</label>
@@ -69,6 +68,8 @@
                 <option value="they/them">They/Them</option>
             </select>
             <label>Characters:</label>
+            <select id="p2Char" onchange="p2CharChange()"></select>
+            <input id="p2Charimg" type="image" width="20" height="20" alt="" src="img/ggst/sol.jpg" style="margin: -5px 0px; pointer-events: none; cursor: default">
         </fieldset>
 
         <br>
@@ -140,13 +141,16 @@
             function charDump() {
                 for (var i = 0; i < ggst.length; i++) {
                     var name = ggst[i]["Name"];
-                    var img = ggst[i]["img"];
-                    var x = document.getElementById('p1Char');
-                    var option = document.createElement('option');
-                    option.text = name;
 
-                    x.add(option);
-                    
+                    var x = document.getElementById('p1Char');
+                    var y = document.getElementById('p2Char');
+                    var optionx = document.createElement('option');
+                    var optiony = document.createElement('option');
+                    optionx.text = name;
+                    optiony.text = name;
+
+                    x.add(optionx);
+                    y.add(optiony);
                 }
             }
         }
@@ -155,9 +159,11 @@
             var value = $('#p1Flag').val();
             for (var i = 0; i < scObj.length; i++) {
                 if (scObj[i]["Code"] == value) {
+                    $('#p1Flagimg').css('opacity', 1);
                     $('#p1Flagimg').attr('src', 'img/flags/' + scObj[i]["img"] + '.svg');
                     break;
                 }
+                $('#p1Flagimg').css('opacity', 0);
                 $('#p1Flagimg').attr('src', '');
             }
         }
@@ -166,17 +172,23 @@
             var value = $('#p2Flag').val();
             for (var i = 0; i < scObj.length; i++) {
                 if (scObj[i]["Code"] == value) {
+                    $('#p2Flagimg').css('opacity', 1);
                     $('#p2Flagimg').attr('src', 'img/flags/' + scObj[i]["img"] + '.svg');
                     break;
                 }
+                $('#p2Flagimg').css('opacity', 0);
                 $('#p2Flagimg').attr('src', '');
             }
         }
 
         function p1CharChange() {
             var index = $('#p1Char').prop('selectedIndex');
-            console.log(index);
             $('#p1Charimg').attr('src', 'img/ggst/' + ggst[index]['img'] + '.jpg');
+        }
+
+        function p2CharChange() {
+            var index = $('#p2Char').prop('selectedIndex');
+            $('#p2Charimg').attr('src', 'img/ggst/' + ggst[index]['img'] + '.jpg');
         }
 
         function toggleDetail(string) {
@@ -198,18 +210,45 @@
             toggleDetail("#p2detail");
         }
 
-        function playerReset() {
-
+        function p1Reset() {
             reset("#p1Sponsor");
             reset("#p1Name");
-            reset("#p2Sponsor");
-            reset("#p2Name");
+            reset("#p1Twitter");
+            reset("#p1Twitch");
+            reset("#p1Flag");
+            $('#p1Flagimg').attr('src', '');
             $('#p1Score').val(0);
-            $('#p2Score').val(0);
-            
+            $("#p1Char").prop('selectedIndex', 0);
+            $('#p1Charimg').attr('src', 'img/ggst/' + ggst[0]['img'] + '.jpg');
+            $("#p1Pronoun").prop('selectedIndex', 0);
+            $('#p1Flagimg').css('opacity', 0);
+
             function reset(string) {
                 $(string).val($(string).defaultValue);
             }
+        }
+
+        function p2Reset() {
+            reset("#p2Sponsor");
+            reset("#p2Name");
+            reset("#p2Twitter");
+            reset("#p2Flag");
+            reset("#p2Twitch");
+            $('#p2Flagimg').attr('src', '');
+            $('#p2Score').val(0);
+            $("#p2Char").prop('selectedIndex', 0);
+            $('#p2Charimg').attr('src', 'img/ggst/' + ggst[0]['img'] + '.jpg');
+            $("#p2Pronoun").prop('selectedIndex', 0);
+            $('#p2Flagimg').css('opacity', 0);
+
+            function reset(string) {
+                $(string).val($(string).defaultValue);
+            }
+        }
+
+        function playerReset() {
+            p1Reset();
+            p2Reset();
         }
 
         function playerSwap() {
@@ -217,6 +256,14 @@
             swap("#p1Sponsor", "#p2Sponsor");
             swap("#p1Name", "#p2Name");
             swap("#p1Score", "#p2Score");
+            swap("#p1Twitter", "#p2Twitter");
+            swap("#p1Flag", "#p2Flag");
+            p1FlagChange();
+            p2FlagChange();
+            swap("#p1Char", "#p2Char");
+            p1CharChange();
+            p2CharChange();
+            swap("#p1Pronoun", "#p2Pronoun");
 
             function swap(string1, string2) {
                 var temp = $(string1).val();
