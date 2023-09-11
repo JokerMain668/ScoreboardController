@@ -21,7 +21,7 @@
 
 html {
     margin: 0rem;
-    font-size: 1px;
+    font-size: 0.75px;
     background-color: #333333;
     color: white;
     font-family: 'Noto';
@@ -33,7 +33,7 @@ p {
 
 button, input, select {
     font-family: 'Noto';
-    font-size: 10rem;
+    font-size: 14rem;
     margin: 2rem;
     height: 30rem;
 }
@@ -41,6 +41,10 @@ button, input, select {
 button {
     margin: 2rem;
     height: 30rem;
+}
+
+select {
+    width: 200rem;
 }
 
 .label {
@@ -75,6 +79,11 @@ button {
 .vertLayout {
     display: flex;
     flex-direction: column;
+}
+
+.ui-menu {
+    width: 150rem;
+    font-size: 14rem;
 }
 
 .ui-accordion {
@@ -112,9 +121,78 @@ button {
     flex-wrap: nowrap;
 }
 
-.countryFlag {
+.countryFlag, .charimg {
     margin: auto;
     pointer-events: none;
     cursor: default;
     opacity: 0;
+}
+
+.charimg {
+    opacity: 1;
+}
+
+.dropbtn {
+    background-color: #EEEEEE;
+    color: black;
+    font-size: 16rem;
+    border: none;
+    cursor: pointer;
+    width: 200rem;
+    background-position: 90%;
+    background-size: 30rem 30rem;
+    background-repeat: no-repeat;
+    text-align: left;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #B4B4B4;
+}
+
+.searchbar {
+    box-sizing: border-box;
+    font-size: 16rem;
+    border: none;
+    border-bottom: 1rem solid #ddd;
+}
+
+#myInput:focus {
+    outline: 3rem solid #ddd;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160rem;
+    overflow: auto;
+    box-shadow: 0rem 8rem 16rem 0rem #00000033;
+    z-index: 1;
+    height: 150rem;
+    overflow: auto;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12rem 16rem;
+    text-decoration: none;
+    display: block;
+    background-position: 90%;
+    background-size: 40rem 40rem;
+    background-repeat: no-repeat;
+}
+
+.dropdown a:hover {
+    background-color: #ddd;
+}
+
+/* show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button */
+.show {
+    display: block;
 }

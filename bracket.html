@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="https://code.jquery.com/jquery-3.6.3.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="scripts/bracket.js" type="text/javascript" charset="utf-8"></script>
+        <link rel="stylesheet" href="scripts/bracket.css"/>
+    </head>
+    <body>
+        <div id="background">
+            <img class="bgimg" src="img/bracket.png">
+        </div>
+        <div id="top8">
+            <div id="winnerSemi">
+                <div id="winnerSemip1" class="player">
+                    <span id="ws10score" class="scores"></span>
+                    <span id="ws10wrapper" class="wrappers">
+                        <span id="ws10Sponsor" class="sponsor"></span>
+                        <span id="ws10Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="winnerSemip2" class="player">
+                    <span id="ws11score" class="scores"></span>
+                    <span id="ws11wrapper" class="wrappers">
+                        <span id="ws11Sponsor" class="sponsor"></span>
+                        <span id="ws11Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="winnerSemip3" class="player">
+                    <span id="ws20score" class="scores"></span>
+                    <span id="ws20wrapper" class="wrappers">
+                        <span id="ws20Sponsor" class="sponsor"></span>
+                        <span id="ws20Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="winnerSemip4" class="player">
+                    <span id="ws21score" class="scores"></span>
+                    <span id="ws21wrapper" class="wrappers">
+                        <span id="ws21Sponsor" class="sponsor"></span>
+                        <span id="ws21Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+            <div id="winnerFinal">
+                <div id="winnerFinalp1" class="player">
+                    <span id="wf0score" class="scores"></span>
+                    <span id="wf0wrapper" class="wrappers">
+                        <span id="wf0Sponsor" class="sponsor"></span>
+                        <span id="wf0Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="winnerFinalp2" class="player">
+                    <span id="wf1score" class="scores"></span>
+                    <span id="wf1wrapper" class="wrappers">
+                        <span id="wf1Sponsor" class="sponsor"></span>
+                        <span id="wf1Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+            <div id="loserTop8">
+                <div id="loserTop8p1" class="player">
+                    <span id="lt10score" class="scores"></span>
+                    <span id="lt10wrapper" class="wrappers">
+                        <span id="lt10Sponsor" class="sponsor"></span>
+                        <span id="lt10Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserTop8p2" class="player">
+                    <span id="lt11score" class="scores"></span>
+                    <span id="lt11wrapper" class="wrappers">
+                        <span id="lt11Sponsor" class="sponsor"></span>
+                        <span id="lt11Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserTop8p3" class="player">
+                    <span id="lt20score" class="scores"></span>
+                    <span id="lt20wrapper" class="wrappers">
+                        <span id="lt20Sponsor" class="sponsor"></span>
+                        <span id="lt20Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserTop8p4" class="player">
+                    <span id="lt21score" class="scores"></span>
+                    <span id="lt21wrapper" class="wrappers">
+                        <span id="lt21Sponsor" class="sponsor"></span>
+                        <span id="lt21Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+            <div id="loserQuarter">
+                <div id="loserQuarterp1" class="player">
+                    <span id="lq10score" class="scores"></span>
+                    <span id="lq10wrapper" class="wrappers">
+                        <span id="lq10Sponsor" class="sponsor"></span>
+                        <span id="lq10Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserQuarterp2" class="player">
+                    <span id="lq11score" class="scores"></span>
+                    <span id="lq11wrapper" class="wrappers">
+                        <span id="lq11Sponsor" class="sponsor"></span>
+                        <span id="lq11Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserQuarterp3" class="player">
+                    <span id="lq20score" class="scores"></span>
+                    <span id="lq20wrapper" class="wrappers">
+                        <span id="lq20Sponsor" class="Sponsor"></span>
+                        <span id="lq20Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserQuarterp4" class="player">
+                    <span id="lq21score" class="scores"></span>
+                    <span id="lq21wrapper" class="wrappers">
+                        <span id="lq21Sponsor" class="sponsor"></span>
+                        <span id="lq21Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+            <div id="loserSemi">
+                <div id="loserSemip1" class="player">
+                    <span id="ls0score" class="scores"></span>
+                    <span id="ls0wrapper" class="wrappers">
+                        <span id="ls0Sponsor" class="sponsor"></span>
+                        <span id="ls0Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserSemip2" class="player">
+                    <span id="ls1score" class="scores"></span>
+                    <span id="ls1wrapper" class="wrappers">
+                        <span id="ls1Sponsor" class="sponsor"></span>
+                        <span id="ls1Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+            <div id="loserFinal">
+                <div id="loserFinalp1" class="player">
+                    <span id="lf0score" class="scores"></span>
+                    <span id="lf0wrapper" class="wrappers">
+                        <span id="lf0Sponsor" class="sponsor"></span>
+                        <span id="lf0Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="loserFinalp2" class="player">
+                    <span id="lf1score" class="scores"></span>
+                    <span id="lf1wrapper" class="wrappers">
+                        <span id="lf1Sponsor" class="sponsor"></span>
+                        <span id="lf1Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+            <div id="grandFinal">
+                <div id="grandFinalp1" class="player">
+                    <span id="gf10score" class="scores"></span>
+                    <span id="gf10wrapper" class="wrappers">
+                        <span id="gf10Sponsor" class="sponsor"></span>
+                        <span id="gf10Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="grandFinalp2" class="player">
+                    <span id="gf11score" class="scores"></span>
+                    <span id="gf11wrapper" class="wrappers">
+                        <span id="gf11Sponsor" class="sponsor"></span>
+                        <span id="gf11Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+            <div id="grandFinalReset">
+                <div id="grandFinalResetp1" class="player">
+                    <span id="gf20score" class="scores"></span>
+                    <span id="gf20wrapper" class="wrappers">
+                        <span id="gf20Sponsor" class="sponsor"></span>
+                        <span id="gf20Name" class="name"></span>
+                    </span>
+                </div>
+                <div id="grandFinalResetp2" class="player">
+                    <span id="gf21score" class="scores"></span>
+                    <span id="gf21wrapper" class="wrappers">
+                        <span id="gf21Sponsor" class="sponsor"></span>
+                        <span id="gf21Name" class="name"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

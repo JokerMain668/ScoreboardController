@@ -1,0 +1,110 @@
+@font-face {
+    font-family: "EMERY";
+    src: url('EMERY.otf');
+}
+
+body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: transparent;
+    padding: 0px;
+    margin: 0px;
+    color: white;
+    font-family: "EMERY";
+}
+
+.bgimg {
+    position: absolute;
+    opacity: 1;
+}
+
+.player {
+    position: absolute;
+}
+
+.wrappers {
+    position: absolute;
+    width: 300px;
+    height: 50px;
+    font-size: 35px;
+    text-align: center;
+}
+
+.scores {
+    position: absolute;
+    width: 64px;
+    height: 50px;
+    text-align: center;
+    font-size: 50px;
+    left: -67px;
+    top: -10px;
+}
+
+#winnerSemi, #loserTop8 {
+    position: absolute;
+    left: 125px;
+}
+
+#winnerFinal, #loserQuarter {
+    position: absolute;
+    left: 575px;
+}
+
+#grandFinal, #loserSemi {
+    position: absolute;
+    left: 1070px;
+}
+
+#grandFinalReset, #loserFinal {
+    position: absolute;
+    left: 1545px;
+}
+
+#winnerSemip1 {
+    top: 89px;
+}
+
+#winnerSemip2 {
+    top: 193px;
+}
+
+#winnerSemip3 {
+    top: 331px;
+}
+
+#winnerSemip4 {
+    top: 435px;
+}
+
+#loserTop8p1, #loserQuarterp1 {
+    top: 591px;
+}
+
+#loserTop8p2, #loserQuarterp2 {
+    top: 695px;
+}
+
+#loserTop8p3, #loserQuarterp3 {
+    top: 833px;
+}
+
+#loserTop8p4, #loserQuarterp4 {
+    top: 937px;
+}
+
+#winnerFinalp1, #grandFinalp1, #grandFinalResetp1 {
+    top: 204px;
+}
+
+#winnerFinalp2, #grandFinalp2, #grandFinalResetp2 {
+    top: 305px;
+}
+
+#loserSemip1, #loserFinalp1 {
+    top: 722px;
+}
+
+#loserSemip2, #loserFinalp2 {
+    top: 823px;
+}
