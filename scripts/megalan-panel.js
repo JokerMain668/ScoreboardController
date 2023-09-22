@@ -232,6 +232,7 @@ function setCharList(url) {
 function setPlayerList() {
     var vhr = new XMLHttpRequest();
     vhr.overrideMimeType('application/json');
+    /*
     var id = bracketID[$('#game option:selected').text()];
     const parseQuery = {
         query: `query {
@@ -268,6 +269,26 @@ function setPlayerList() {
                 nameArr.push(playerJSON[i]['participants'][0]['gamerTag']);
                 var prefix = playerJSON[i]["participants"][0]["prefix"] == "" || playerJSON[i]["participants"][0]["prefix"] == null ? 
                     "" : playerJSON[i]["participants"][0]["prefix"];
+                subArr.push(prefix);
+            }
+            autocomplete(document.getElementById("p1Name"), nameArr, subArr);
+            autocomplete(document.getElementById("p2Name"), nameArr, subArr);
+        }
+    }
+    */
+    vhr.overrideMimeType('application/json')
+    vhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/json/ggst-players.json?ref=main');
+    vhr.send();
+    vhr.onreadystatechange = function() {
+        if (vhr.readyState === 4) {
+            playerJSON = JSON.parse(atob(JSON.parse(vhr.responseText)['content']));
+            console.log(playerJSON);
+            var nameArr = [];
+            var subArr = [];
+            for (var i = 0; i < Object.keys(playerJSON).length; i++) {
+                nameArr.push(playerJSON[i]['Player']);
+                var prefix = playerJSON[i]["Sponsor"] == null ? 
+                "" : playerJSON[i]["Sponsor"];
                 subArr.push(prefix);
             }
             autocomplete(document.getElementById("p1Name"), nameArr, subArr);
@@ -376,12 +397,23 @@ function changeChar(id, char) {
 }
 
 function onNameChange(string) {
+    
     setTimeout(() => {
         var name = $("#" + string + "Name").val();
         for (var i = 0; i < playerJSON.length; i++) {
+            /*
             if (playerJSON[i]["participants"][0]["gamerTag"] == name) {
                 var prefix = playerJSON[i]["participants"][0]["prefix"];
                 $("#" + string + "Sponsor").val(prefix);
+            }
+            */
+            if (playerJSON[i]["Player"] == name) {
+                var prefix = playerJSON[i]["Sponsor"] == null ? "" : playerJSON[i]["Sponsor"];
+                $("#" + string + "Sponsor").val(prefix);
+                $("#" + string + "Flag").val(playerJSON[i]["State"]);
+                flagChange(string + 'Flag');
+                if (playerJSON[i]["Main"] != null) changeChar(string + 'Char', playerJSON[i]["Main"]);
+                $("#" + string + "Twitter").val(playerJSON[i]["Twitter"]);
             }
         }
     }, 100);

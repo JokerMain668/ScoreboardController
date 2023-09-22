@@ -89,7 +89,7 @@ select {
 .ui-accordion {
     font-family: 'Noto';
     font-size: 14rem;
-    max-width: 490rem;
+    max-width: 550rem;
 }
 
 .ui-accordion-content {
