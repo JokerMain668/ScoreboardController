@@ -4,6 +4,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script src="scripts/megalan-panel.js"></script>
+    <script src="scripts/autocomplete.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="scripts/panel.css">    
     <link rel="stylesheet" href="font-awesome/css/all.css" type="text/css" charset="utf-8">
@@ -30,9 +31,12 @@
                         <legend>Player 1</legend>
                         <div class="controlgroup horiLayout">
                             <input class="lssc-input" id="p1Sponsor" title="P1 Sponsor" >
-                            <input class="lssc-input" id="p1Name" title="P1 Name">
-                            <input onchange="flagChange('p1Flag')" class="lssc-input" list="Flags" id="p1Flag" title="P1 Country">
-                            <datalist id="Flags"></datalist>
+                            <div class="autocomplete">
+                                <input class="lssc-input" id="p1Name" title="P1 Name" onchange="onNameChange('p1')">
+                            </div>
+                            <div class="autocomplete">
+                                <input onchange="flagChange('p1Flag')" class="lssc-input" id="p1Flag" title="P1 Country">
+                            </div>
                             <img id="p1Flagimg" class="countryFlag" type="image" width="30" height="30">
                             <label for="p1LoserMark">L</label>
                             <input class="lssc-input" id="p1LoserMark" type="checkbox">
@@ -47,8 +51,12 @@
                         <legend>Player 2</legend>
                         <div class="controlgroup horiLayout">
                             <input class="lssc-input" id="p2Sponsor" title="P2 Sponsor" >
-                            <input class="lssc-input" id="p2Name" title="P2 Name">
-                            <input onchange="flagChange('p2Flag')" class="lssc-input" list="Flags" id="p2Flag" title="P2 Country">
+                            <div class="autocomplete">
+                                <input class="lssc-input" id="p2Name" title="P2 Name" onchange="onNameChange('p2')">
+                            </div>
+                            <div class="autocomplete">
+                                <input onchange="flagChange('p2Flag')" class="lssc-input" id="p2Flag" title="P2 Country">
+                            </div>
                             <img id="p2Flagimg" class="countryFlag" type="image" width="30" height="30">
                             <label for="p2LoserMark">L</label>
                             <input class="lssc-input" id="p2LoserMark" type="checkbox">
@@ -70,7 +78,7 @@
                                 <div class="horiLayout">
                                     <label>Character</label>
                                     <div class="dropdown">
-                                        <button onclick="toggleDD('p1CharDD')" class="dropbtn" id="p1Char" style="background-image: url(img/ggst/sol.jpg)">Sol Badguy</button>
+                                        <button onclick="toggleDD('p1CharDD')" class="dropbtn" id="p1Char" >Sol Badguy</button>
                                         <div id="p1CharDD" class="dropdown-content">
                                             <input type="text" id="p1CharSearch" placeholder="Search..." class="searchbar" onkeyup="filterFunction('p1CharDD', 'p1CharSearch')">
                                         </div>
@@ -92,7 +100,7 @@
                                 <div class="horiLayout">
                                     <label>Character</label>
                                     <div class="dropdown">
-                                        <button onclick="toggleDD('p2CharDD')" class="dropbtn" id="p2Char" style="background-image: url(img/ggst/sol.jpg)">Sol Badguy</button>
+                                        <button onclick="toggleDD('p2CharDD')" class="dropbtn" id="p2Char" >Sol Badguy</button>
                                         <div id="p2CharDD" class="dropdown-content">
                                             <input type="text" id="p2CharSearch" placeholder="Search..." class="searchbar" onkeyup="filterFunction('p2CharDD', 'p2CharSearch')">
                                         </div>
@@ -117,7 +125,7 @@
             <div class="vertLayout">
                 <div class="horiLayout">
                     <div class="label">Game:</div>
-                    <select class="lssc-input" id="game" dataSet="games" dataField="1" title="Select game being played">
+                    <select class="lssc-input" id="game" dataSet="games" dataField="1" title="Select game being played" onchange="gameChange()">
                         <option>Street Fighter 6</option>
                         <option>Tekken 7</option>
                         <option>Guilty Gear -Strive-</option>
@@ -133,19 +141,22 @@
                     <div class="label">Round:</div>
 
                     <select class="lssc-input" id="mText2">
-						<option>Casuals</option>
-						<option>Money Match</option>
-						<option>Tournament</option>
-						<option>Exhibition Match</option>
-						<option>Pools</option>
-						<option>Pools (Losers)</option>
-						<option>Winners Side</option>
-						<option>Losers Side</option>
-						<option>Top 8</option>
-						<option>Top 8 (Losers)</option>
-						<option>Winners Final</option>
-						<option>Losers Final</option>
-						<option>Grand Final</option>
+						<option value="Casuals">Casuals</option>
+						<option value="Money Match">Money Match</option>
+						<option value="Tournament">Tournament</option>
+						<option value="Exhibition Match">Exhibition Match</option>
+						<option value="Pools">Pools</option>
+						<option value="Pools (Losers)">Pools (Losers)</option>
+						<option value="Winners Side">Winners Side</option>
+						<option value="Losers Side">Losers Side</option>
+						<option value="Top 8">Top 8</option>
+                        <option value="Winners Semis">Winners Semis</option>
+						<option value="Top 8 (Losers)">Top 8 (Losers)</option>
+                        <option value="Losers Semi">Losers Semi</option>
+						<option value="Winners Final">Winners Final</option>
+						<option value="Losers Final">Losers Final</option>
+						<option value="Grand Final">Grand Final</option>
+                        <option value="Grand Final Reset">Grand Final Reset</option>
 					</select>
                 </div>
                 <div class="horiLayout">
@@ -204,9 +215,10 @@
                     <div class="controlgroup horiLayout">
                         <input class="lssc-input" id="c2Name" title="Commentator Name RHS">
                         <input class="lssc-input" id="c2Twitter" title="Twitter RHS">
-                        <button onclick="resetVal('c2Name,c2Twitter')" autocomplete='off' >Reset Comm1</button>
+                        <button onclick="resetVal('c2Name,c2Twitter')" autocomplete='off' >Reset Comm2</button>
                     </div>
                 </fieldset>
+                <button class="lssc-input" onclick="swapVal('c1Name,c1Twitter', 'c2Name,c2Twitter')" autocomplete="off">Swap</button>
             </div>
         </div>
         <div class="accordion" id="tab5">
@@ -219,6 +231,16 @@
                         <div class="label">6a31e52afed0b3ddc06ed3db049ef03a</div>
                     </dic>
                 </fieldset>
+            </div>
+        </div>
+        <div class="accordion" id="tab6">
+            <h3>Settings</h3>
+            <div class="vertLayout">
+                <div class="horiLayout">
+                    <label>Current Magnification: </label>
+                    <label id="ui-scaling-value"> ???</label>
+                </div>
+                <div id="ui-scaling-slider"></div>
             </div>
         </div>
     </div>

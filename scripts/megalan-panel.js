@@ -19,8 +19,26 @@ var JSONtxt = {
     Game: "",
     bottomLeft: "",
     bottomRight: "",
-    startggToken: "",
+    EvtName: "",
+    p1Comm: "",
+    p2Comm: ""
 }
+
+var bracketID = {
+    "Street Fighter 6": "970274",
+    "Guilty Gear -Strive-": "970269",
+    "Tekken 7": "970268",
+    "Granblue Fantasy: Versus": "970272",
+    "King of Fighters XV": "970270",
+    "BlazBlue: Central Fiction": "970277",
+    "Guilty Gear Xrd REV 2": "970273",
+    "Under Night In-Birth Exe:Late[cl-r]": "970271",
+    "Super Smash Bros. Ultimate": "970275"
+}
+
+var charList;
+var playerJSON;
+
 function init() {
     // Apply accordion class from JQuery UI
     $(".accordion").accordion({
@@ -32,6 +50,18 @@ function init() {
     // Apply controlgroup class from JQuery UI
     $(".controlgroup").controlgroup();
 
+    $("#ui-scaling-value").html('1x');
+    $("#ui-scaling-slider").slider({
+        value: 1,
+        min: 0.5,
+        max: 1.5,
+        step: 0.125,
+        slide: function(event, ui) {
+            $("#ui-scaling-value").html(ui.value + 'x');
+            $('html').css('font-size', ui.value + 'px');
+        }
+    })
+
     resizeTF();
 
     $(document).tooltip({
@@ -39,49 +69,44 @@ function init() {
         position: { my: "top-150%", at: "top left" },
     });
 
+    setPlayerList();
+
     var xhr = new XMLHttpRequest();
-    var vhr = new XMLHttpRequest();
 
     xhr.overrideMimeType('application/json');
-    vhr.overrideMimeType('application/json');
     
-    xhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/flags.json?ref=main');
+    xhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/json/flags.json?ref=main');
     xhr.send();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             scObj = JSON.parse(atob(JSON.parse(xhr.responseText)['content']));
-            //console.log(scObj);
+            console.log(scObj);
             storeDataList();
+            loadOldStorage();
         }
     }
-
-    vhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/ggst.json?ref=main');
-    vhr.send();
-    vhr.onreadystatechange = function() {
-        if (vhr.readyState === 4) {
-            ggst = JSON.parse(atob(JSON.parse(vhr.responseText)['content']));
-            console.log(ggst);
-            charDump("p1Char");
-            charDump("p2Char");
-        }
-    }
-
+    
     function storeDataList() {
+        var nameArr = [];
+        var subArr = [];
         for (var i = 0; i < scObj.length; i++) {
-            var code = scObj[i]["Code"];
-            var name = scObj[i]["Name"];
-
-            $('#Flags').append(`<option value="${code}">${name}</option>`);
+            nameArr.push(scObj[i]["Code"]);
+            subArr.push(scObj[i]["Name"]);
         }
+        autocomplete(document.getElementById("p1Flag"), nameArr, subArr);
+        autocomplete(document.getElementById("p2Flag"), nameArr, subArr);
     }
+}
 
-    function charDump(string) {
-        for (var i = 0; i < ggst.length; i++) {
-            var name = ggst[i]["Full"];
-            var img = ggst[i]['img'];
-            
-            $("#" + string + "DD").append(`<a style="background-image: url(img/ggst/${img}.jpg);" onclick="changeChar('${string}', '${name}', ${i})">${name}</a>`);
-        }
+function charDump(string) {
+    $("#" + string + "DD").find('a').remove();
+    changeChar(string, charList[0]["Name"]);
+
+    for (var i = 0; i < charList.length; i++) {
+        var name = charList[i]["Name"];
+        var img = charList[i]['img'];
+        
+        $("#" + string + "DD").append(`<a style="background-image: url(${img})" onclick="changeChar('${string}', '${name}')">${name}</a>`);
     }
 }
 
@@ -96,6 +121,46 @@ function resizeTF() {
 
     $( "#p1Score" ).spinner().width('20rem');
     $( "#p2Score" ).spinner().width('20rem');
+}
+
+function loadOldStorage() {
+    var data = JSON.parse(localStorage.getItem("JSON"));
+    console.log(data);
+    $("#game").val(data.Game);
+    gameChange();
+
+    $("#p1Sponsor").val(data.p1Sponsor);
+    $("#p1Name").val(data.p1Name);
+    $("#p2Sponsor").val(data.p2Sponsor);
+    $("#p2Name").val(data.p2Name);
+    $("#p1Score").val(data.p1Score);
+    $("#p2Score").val(data.p2Score);
+    $("#mText2").val(data.round);
+    $("#p1Flag").val(data.p1Flag);
+    $("#p2Flag").val(data.p2Flag);
+    flagChange("p1Flag");
+    flagChange("p2Flag");
+    
+    /* Bugged for some reason
+    $("#p2LoserMark").prop("checked", false);
+    console.log($("#p2LoserMark").is(":checked"));
+    */
+
+    $("#p1Pronoun").val(data.p1Pronoun);
+    $("#p2Pronoun").val(data.p2Pronoun);
+    $("#p1Twitter").val(data.p1Twitter);
+    $("#p2Twitter").val(data.p2Twitter);
+
+    setTimeout(() => {
+        changeChar('p1Char', data.p1Char);
+        changeChar('p2Char', data.p2Char);
+    }, 500);
+
+    $("#mTxt1").val(data.EvtName);
+    $("#bottomLeft").val(data.bottomLeft);
+    $("#bottomRight").val(data.bottomRight);
+    $("#c1Name").val(data.p1Comm);
+    $("#c2Name").val(data.p2Comm);
 }
 
 function resetVal(string) {
@@ -117,6 +182,98 @@ function resetVal(string) {
                 break;
         }
     });
+}
+
+function gameChange() {
+    var game = $("#game option:selected").text();
+    switch(game) {
+        case "Street Fighter 6":
+            setCharList('sf6.json');
+            break;
+        case "Tekken 7":
+            setCharList('tekken.json');
+            break;
+        case "Guilty Gear Xrd REV 2":
+            setCharList('ggxrd.json');
+            break;
+        case "King of Fighters XV":
+            setCharList('kofxv.json');
+            break;
+        case "Granblue Fantasy: Versus":
+            setCharList('gbvs.json');
+            break;
+        case "BlazBlue: Central Fiction":
+            setCharList('bbcf.json');
+            break;
+        case "Under Night In-Birth Exe:Late[cl-r]":
+            setCharList('uniclr.json');
+            break;
+        default:
+            setCharList('ggst.json');
+            break;
+    }
+    setPlayerList();
+}
+
+function setCharList(url) {
+    var vhr = new XMLHttpRequest();
+    vhr.overrideMimeType('application/json');
+    vhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/json/' + url + '?ref=main');
+    vhr.send();
+    vhr.onreadystatechange = function() {
+        if (vhr.readyState === 4) {
+            charList = JSON.parse(atob(JSON.parse(vhr.responseText)['content']));
+            charDump("p1Char");
+            charDump("p2Char");
+        }
+    }
+}
+
+function setPlayerList() {
+    var vhr = new XMLHttpRequest();
+    vhr.overrideMimeType('application/json');
+    var id = bracketID[$('#game option:selected').text()];
+    const parseQuery = {
+        query: `query {
+            event(id: ` + id + `) {
+                id
+                name
+                entrants(query: {
+                    page: 1
+                    perPage: 500
+                }) {
+                    nodes {
+                        id
+                        participants {
+                            id
+                            prefix
+                            gamerTag
+                        }
+                    }
+                }
+            }
+        }`
+    }
+    vhr.open('POST', "https://api.start.gg/gql/alpha", true);
+    vhr.setRequestHeader('Authorization', 'Bearer 6a31e52afed0b3ddc06ed3db049ef03a');
+    vhr.setRequestHeader('Content-type', 'application/json');
+    vhr.send(JSON.stringify(parseQuery));
+    vhr.onreadystatechange = function() {
+        if (vhr.readyState === 4) {
+            playerJSON = JSON.parse(vhr.responseText)['data']['event']['entrants']['nodes'];
+            //console.log(playerJSON);
+            var nameArr = [];
+            var subArr = [];
+            for (var i = 0; i < Object.keys(playerJSON).length; i++) {
+                nameArr.push(playerJSON[i]['participants'][0]['gamerTag']);
+                var prefix = playerJSON[i]["participants"][0]["prefix"] == "" || playerJSON[i]["participants"][0]["prefix"] == null ? 
+                    "" : playerJSON[i]["participants"][0]["prefix"];
+                subArr.push(prefix);
+            }
+            autocomplete(document.getElementById("p1Name"), nameArr, subArr);
+            autocomplete(document.getElementById("p2Name"), nameArr, subArr);
+        }
+    }
 }
 
 function swapVal(string1, string2) {
@@ -206,10 +363,28 @@ window.onclick = function(event) {
     }
 }
 
-function changeChar(id, char, index) {
-    console.log(char + ", " + index);
+function changeChar(id, char) {
     $("#" + id).html(char);
-    $("#" + id).attr('style', 'background-image: url(img/ggst/' + ggst[index]['img'] + '.jpg)');
+    var index = 0;
+    for (var i = 0; i < charList.length; i++) {
+        if (charList[i]["Name"] == char) {
+            index = i;
+            break;
+        }
+    }
+    $("#" + id).attr('style', 'background-image: url('+ charList[index]['img'] + ')');
+}
+
+function onNameChange(string) {
+    setTimeout(() => {
+        var name = $("#" + string + "Name").val();
+        for (var i = 0; i < playerJSON.length; i++) {
+            if (playerJSON[i]["participants"][0]["gamerTag"] == name) {
+                var prefix = playerJSON[i]["participants"][0]["prefix"];
+                $("#" + string + "Sponsor").val(prefix);
+            }
+        }
+    }, 100);
 }
 
 function save() {
@@ -233,7 +408,9 @@ function save() {
     JSONtxt.Game = $("#game option:selected").text();
     JSONtxt.bottomLeft = $("#bottomLeft").val();
     JSONtxt.bottomRight = $("#bottomRight").val()
-    JSONtxt.startggToken = $("#startggToken").val();
+    JSONtxt.EvtName = $("#mTxt1").val();
+    JSONtxt.p1Comm = $("#c1Name").val()
+    JSONtxt.p2Comm = $("#c2Name").val();
     
     localStorage.setItem("JSON", JSON.stringify(JSONtxt));
     console.log(localStorage.getItem("JSON"));
