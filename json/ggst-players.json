@@ -49,7 +49,7 @@
     },
     {
         "Player": "Allo",
-        "Sponsor": null,
+        "Sponsor": "7HB",
         "Main": "Axl",
         "Twitter": "UwUAllo",
         "ChallongeID": null,
@@ -336,12 +336,12 @@
         "State": "SA"
     },
     {
-        "Player": "Risky",
+        "Player": "Crazyhead",
         "Sponsor": null,
-        "Main": "Potemkin",
-        "Twitter": "risky_b_s",
+        "Main": "Nagoriyuki",
+        "Twitter": "XdCrazyhead",
         "ChallongeID": null,
-        "State": "NSW"
+        "State": "NZ"
     },
     {
         "Player": "Dailou",
@@ -480,6 +480,14 @@
         "State": "AUS"
     },
     {
+        "Player": "fknking",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
+    },
+    {
         "Player": "Forte",
         "Sponsor": null,
         "Main": null,
@@ -507,7 +515,7 @@
         "Player": "Frank",
         "Sponsor": null,
         "Main": null,
-        "Twitter": "FrankChen",
+        "Twitter": "FrankChenFGC",
         "ChallongeID": null,
         "State": "VIC"
     },
@@ -848,6 +856,14 @@
         "State": "WA"
     },
     {
+        "Player": "KLO",
+        "Sponsor": null,
+        "Main": "Bedman",
+        "Twitter": "KLOmegalul",
+        "ChallongeID": null,
+        "State": "NSW"
+    },
+    {
         "Player": "Knawmun",
         "Sponsor": "CANT",
         "Main": "Chipp",
@@ -1024,12 +1040,28 @@
         "State": "QLD"
     },
     {
+        "Player": "Mitchsama",
+        "Sponsor": "LRE",
+        "Main": "Leo",
+        "Twitter": "mitchsama",
+        "ChallongeID": null,
+        "State": "VIC"
+    },
+    {
         "Player": "Moad Snake",
         "Sponsor": null,
         "Main": "Ky",
         "Twitter": null,
         "ChallongeID": null,
         "State": null
+    },
+    {
+        "Player": "Moose",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": "Shmoose_",
+        "ChallongeID": null,
+        "State": "SA"
     },
     {
         "Player": "MultiTankDorifto",
@@ -1070,6 +1102,22 @@
         "Twitter": "elvanma2",
         "ChallongeID": null,
         "State": "NSW"
+    },
+    {
+        "Player": "Nember",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": "NemNember",
+        "ChallongeID": null,
+        "State": "SA"
+    },
+    {
+        "Player": "Nexy",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "VIC"
     },
     {
         "Player": "Niflheim",
@@ -1213,13 +1261,21 @@
         "Main": "I-No",
         "Twitter": "QinghaoGoh",
         "ChallongeID": null,
-        "State": "SGP"
+        "State": "SG"
     },
     {
-        "Player": "RaginRanga",
+        "Player": "RagingRanga",
         "Sponsor": null,
         "Main": "Anji",
         "Twitter": "RagingRangaNZ",
+        "ChallongeID": null,
+        "State": "NZ"
+    },
+    {
+        "Player": "Rad Chad",
+        "Sponsor": null,
+        "Main": "Bedman",
+        "Twitter": null,
         "ChallongeID": null,
         "State": "NZ"
     },
@@ -1280,6 +1336,14 @@
         "State": "NSW"
     },
     {
+        "Player": "Risky",
+        "Sponsor": null,
+        "Main": "Potemkin",
+        "Twitter": "risky_b_s",
+        "ChallongeID": null,
+        "State": "NSW"
+    },
+    {
         "Player": "Rikishi",
         "Sponsor": "OOPS",
         "Main": "Potemkin",
@@ -1301,7 +1365,7 @@
         "Main": "Bridget",
         "Twitter": "saf_gc",
         "ChallongeID": null,
-        "State": "SGP"
+        "State": "SG"
     },
     {
         "Player": "SaltiestFurry",
@@ -1328,12 +1392,28 @@
         "State": "SA"
     },
     {
-        "Player": "Sencho",
+        "Player": "seggsbo",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
+    },
+    {
+        "Player": "Sencho_Fan",
         "Sponsor": null,
         "Main": "Goldlewis",
         "Twitter": null,
         "ChallongeID": null,
         "State": "AUS"
+    },
+    {
+        "Player": "shaze",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "NSW"
     },
     {
         "Player": "Sherief",
@@ -1342,6 +1422,14 @@
         "Twitter": "Sherief_OCE",
         "ChallongeID": null,
         "State": "QLD"
+    },
+    {
+        "Player": "Silverback",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
     },
     {
         "Player": "Sin",
@@ -1488,6 +1576,14 @@
         "State": "NSW"
     },
     {
+        "Player": "The Living 3DS",
+        "Sponsor": "OOPS",
+        "Main": "Potemkin",
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
+    },
+    {
         "Player": "thewanderingbard",
         "Sponsor": null,
         "Main": null,
@@ -1608,12 +1704,28 @@
         "State": "VIC"
     },
     {
+        "Player": "Whatsthewordlimi",
+        "Sponsor": null,
+        "Main": "Jack-O&rsquo;",
+        "Twitter": "MonsterGirlsFTW",
+        "ChallongeID": null,
+        "State": "QLD"
+    },
+    {
         "Player": "WhyZee",
         "Sponsor": null,
         "Main": "Johnny",
         "Twitter": null,
         "ChallongeID": null,
         "State": "NSW"
+    },
+    {
+        "Player": "Wingki",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
     },
     {
         "Player": "Wishful",
@@ -1683,6 +1795,22 @@
         "Player": "Yume",
         "Sponsor": null,
         "Main": "Millia",
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "NSW"
+    },
+    {
+        "Player": "YummyBrownie",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": null
+    },
+    {
+        "Player": "Yunus",
+        "Sponsor": null,
+        "Main": "Anji",
         "Twitter": null,
         "ChallongeID": null,
         "State": "NSW"
