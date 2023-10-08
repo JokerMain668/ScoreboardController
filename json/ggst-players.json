@@ -112,6 +112,14 @@
         "State": "VIC"
     },
     {
+        "Player": "Based Byakuya",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "QLD"
+    },
+    {
         "Player": "Beamerboy",
         "Sponsor": null,
         "Main": "Ky",
@@ -483,6 +491,14 @@
         "Player": "fknking",
         "Sponsor": null,
         "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
+    },
+    {
+        "Player": "Floop",
+        "Sponsor": "BOOB",
+        "Main": "Baiken",
         "Twitter": null,
         "ChallongeID": null,
         "State": "AUS"
@@ -1056,6 +1072,14 @@
         "State": null
     },
     {
+        "Player": "Mocha Hyena",
+        "Sponsor": null,
+        "Main": "Sin",
+        "Twitter": "Moritch_Yeen",
+        "ChallongeID": null,
+        "State": "NSW"
+    },
+    {
         "Player": "Moose",
         "Sponsor": null,
         "Main": null,
@@ -1152,6 +1176,14 @@
         "State": "AUS"
     },
     {
+        "Player": "OljeMoit",
+        "Sponsor": "GUMGA",
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
+    },
+    {
         "Player": "oneforsteve",
         "Sponsor": null,
         "Main": null,
@@ -1171,6 +1203,14 @@
         "Player": "OuchCrab",
         "Sponsor": "OOPS",
         "Main": "Potemkin",
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
+    },
+    {
+        "Player": "paint me blue",
+        "Sponsor": "GZ",
+        "Main": null,
         "Twitter": null,
         "ChallongeID": null,
         "State": "AUS"
@@ -1242,7 +1282,7 @@
     {
         "Player": "Pudiry",
         "Sponsor": null,
-        "Main": null,
+        "Main": "Potemkin",
         "Twitter": "Pudiry",
         "ChallongeID": null,
         "State": "WA"
@@ -1294,6 +1334,14 @@
         "Twitter": "RagingRavioli1",
         "ChallongeID": null,
         "State": "SA"
+    },
+    {
+        "Player": "Rayn",
+        "Sponsor": "RG",
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
     },
     {
         "Player": "Redfy",
@@ -1510,6 +1558,22 @@
         "Twitter": null,
         "ChallongeID": null,
         "State": "VIC"
+    },
+    {
+        "Player": "starlit_stella",
+        "Sponsor": null,
+        "Main": "Ramlethal",
+        "Twitter": "starlit_stella",
+        "ChallongeID": null,
+        "State": "VIC"
+    },
+    {
+        "Player": "stij",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
     },
     {
         "Player": "Stillbca",
@@ -1790,6 +1854,14 @@
         "Twitter": null,
         "ChallongeID": null,
         "State": "QLD"
+    },
+    {
+        "Player": "YoungAmoeba",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": "YOUNG_AMOEBA",
+        "ChallongeID": null,
+        "State": "WA"
     },
     {
         "Player": "Yume",
