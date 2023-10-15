@@ -104,6 +104,14 @@
         "State": "ACT"
     },
     {
+        "Player": "Awesome741",
+        "Sponsor": null,
+        "Main": "Potemkin",
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "WA"
+    },
+    {
         "Player": "Aya",
         "Sponsor": null,
         "Main": null,
@@ -464,6 +472,14 @@
         "State": "NSW"
     },
     {
+        "Player": "FatKid127",
+        "Sponsor": null,
+        "Main": "Sol",
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "NSW"
+    },
+    {
         "Player": "Feri",
         "Sponsor": null,
         "Main": null,
@@ -654,6 +670,14 @@
         "Twitter": "Grati0_",
         "ChallongeID": null,
         "State": "VIC"
+    },
+    {
+        "Player": "Gumga_Da_Kool",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": "AUS"
     },
     {
         "Player": "HamGood",
@@ -1160,6 +1184,14 @@
         "State": "VIC"
     },
     {
+        "Player": "Noses",
+        "Sponsor": null,
+        "Main": null,
+        "Twitter": null,
+        "ChallongeID": null,
+        "State": null
+    },
+    {
         "Player": "Nova",
         "Sponsor": null,
         "Main": null,
@@ -1170,14 +1202,6 @@
     {
         "Player": "Okay",
         "Sponsor": null,
-        "Main": null,
-        "Twitter": null,
-        "ChallongeID": null,
-        "State": "AUS"
-    },
-    {
-        "Player": "OljeMoit",
-        "Sponsor": "GUMGA",
         "Main": null,
         "Twitter": null,
         "ChallongeID": null,
@@ -1818,7 +1842,7 @@
     {
         "Player": "Wumbofuze",
         "Sponsor": "SSC",
-        "Main": "Faust",
+        "Main": "May",
         "Twitter": "WumboFuze",
         "ChallongeID": null,
         "State": "NSW"
