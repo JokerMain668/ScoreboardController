@@ -1,0 +1,293 @@
+@font-face {
+    font-family: 'Noto';
+    src: url(../fonts/NotoSansDisplay-CondensedSemiBold.ttf);
+}
+
+@font-face {
+    font-family: 'Noto';
+    src: url(../fonts//NotoSansJP-Medium.otf);
+    unicode-range: U+3000-9FFF;
+}
+
+html {
+    margin: 0rem;
+    font-size: 1px;
+    background-color: #333333;
+    color: white;
+    font-family: 'Noto';
+}
+
+p {
+    font-size: 14rem;
+}
+
+button, input, select {
+    font-family: 'Noto';
+    font-size: 14rem;
+    margin: 2rem;
+    height: 30rem;
+}
+
+button {
+    margin: 2rem;
+    height: 30rem;
+}
+
+select {
+    width: 200rem;
+}
+
+.label {
+    font-size: 14rem;
+    font-family: 'Noto';
+    margin-right: 10rem;
+}
+
+.startggIcon {
+    background: url(../img/startgg.svg);
+    height: 14rem;
+    width: 21rem;
+    display: inline-block;
+    filter: grayscale(100%);
+}
+
+.topHeading {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 482rem;
+}
+
+.horiLayout {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.vertLayout {
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-menu {
+    width: 150rem;
+    font-size: 14rem;
+}
+
+.ui-accordion {
+    font-family: 'Noto';
+    font-size: 14rem;
+    max-width: 550rem;
+}
+
+.ui-accordion-content {
+    border-color: black;
+}
+
+.ui-accordion-header {
+    background-color: #ff005d;
+    color: white;
+}
+
+.ui-accordion-header-active {
+    background-color: rgba(255, 255, 255, 0.753);
+    flex-grow: 4;
+    min-width: 450rem;
+    color: black;
+}
+
+.ui-tooltip {
+    font-family: 'Noto';
+    font-size: 14rem;
+    max-width: 300px;
+    background: #333333;
+    color: white;
+}
+
+.ui-button {
+    font-size: 18rem;
+}
+
+#lssc-panels {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.countryFlag, .charimg {
+    margin: auto;
+    pointer-events: none;
+    cursor: default;
+    opacity: 0;
+}
+
+.charimg {
+    opacity: 1;
+}
+
+.dropbtn {
+    background-color: #EEEEEE;
+    color: black;
+    font-size: 16rem;
+    border: none;
+    cursor: pointer;
+    width: 200rem;
+    background-position: 90%;
+    background-size: 30rem 30rem;
+    background-repeat: no-repeat;
+    text-align: left;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #B4B4B4;
+}
+
+.searchbar {
+    box-sizing: border-box;
+    font-size: 16rem;
+    border: none;
+    border-bottom: 1rem solid #ddd;
+}
+
+#myInput:focus {
+    outline: 3rem solid #ddd;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160rem;
+    overflow: auto;
+    box-shadow: 0rem 8rem 16rem 0rem #00000033;
+    z-index: 1;
+    height: 150rem;
+    overflow: auto;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12rem 16rem;
+    text-decoration: none;
+    display: block;
+    background-position: 90%;
+    background-size: 40rem 40rem;
+    background-repeat: no-repeat;
+}
+
+.dropdown a:hover {
+    background-color: #ddddddaf;
+}
+
+/* show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button */
+.show {
+    display: block;
+}
+
+.autocomplete {
+    position: relative;
+    display: inline-block;
+    font-family: Arial;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1rem solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 5rem;
+    cursor: pointer;
+    background-color: white;
+    border-bottom: 1rem solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+    background-color: #e9e9e9
+}
+
+.autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 30rem;
+    height: 17rem;
+    top: -10rem;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #3870e0;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13rem;
+    width: 13rem;
+    left: 4rem;
+    bottom: 2rem;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #ff7324;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1rem #ff7324;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(9rem);
+    -ms-transform: translateX(9rem);
+    transform: translateX(9rem);
+}
+
+.slider.round {
+    border-radius: 34rem;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+#settings {
+    font-family: 'Noto';
+    height: 80rem;
+    font-size: 14rem;
+    background-color: white;
+}

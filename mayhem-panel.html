@@ -1,0 +1,308 @@
+<html>
+    <head>
+        <title>Mayhem Overlay Helper</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+        <script src="scripts/panel.js"></script>
+        <script src="scripts/bracketAllocate.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="scripts/panel.css">    
+    </head>
+    <body onload="init()">
+        <div class="topHeading">
+            <!-- Heading buttons -->
+            <div>
+                <button id="save-local" onclick="save()" autocomplete="off"><i class="fas fa-upload"></i> Send</button>
+                <button id="reload-local" autocomplete="off" onclick="reload()"><i class="fas fa-rotate-right"></i>Reload</button>
+            </div>
+            <div>
+                <button id="expand-sections" onclick="expand()" autocomplete="off"><i class="fas fa-maximize"></i>Expand</button>
+                <button id="collpase-sections" onclick="collapse()" autocomplete="off"><i class="fas fa-minimize"></i>Collapse</button>
+            </div>
+        </div>
+        <div id="lssc-panels">
+            <div class="accordion" id="tab1">
+                <h3>Scoreboard</h3>
+                <div class="vertLayout">
+                    <div class="horiLayout">
+                        <fieldset>
+                            <legend>Player 1</legend>
+                            <div class="controlgroup horiLayout">
+                                <input class="lssc-input" id="p1Sponsor" title="P1 Sponsor" >
+                                <div class="autocomplete">
+                                    <input class="lssc-input" id="p1Name" title="P1 Name" oninput="onNameChange('p1')">
+                                </div>
+                                <div class="autocomplete">
+                                    <input onchange="flagChange('p1Flag')" class="lssc-input" id="p1Flag" title="P1 Country">
+                                </div>
+                                <img id="p1Flagimg" class="countryFlag" type="image" width="30" height="30">
+                                <label for="p1LoserMark">L</label>
+                                <input class="lssc-input" id="p1LoserMark" type="checkbox">
+                                <input class="lssc-input" id="p1Score" title="P1 Score" type="spinner" value="0" min="0" change="onScoreChange('p1')">
+                            </div>
+                            <button onclick="resetVal('p1Sponsor,p1Name,p1Flag,p1Flagimg,p1LoserMark,p1Score,p1Twitter,p1Pronoun,p1ID')" autocomplete="off">Reset</button>
+                            <label id="p1ID"></label>
+                        </fieldset>
+                    </div>
+                    <div class="horiLayout">
+                        <fieldset>
+                            <legend>Player 2</legend>
+                            <div class="controlgroup horiLayout">
+                                <input class="lssc-input" id="p2Sponsor" title="P2 Sponsor" >
+                                <div class="autocomplete">
+                                    <input class="lssc-input" id="p2Name" title="P2 Name" oninput="onNameChange('p2')">
+                                </div>
+                                <div class="autocomplete">
+                                    <input onchange="flagChange('p2Flag')" class="lssc-input" id="p2Flag" title="P2 Country">
+                                </div>
+                                <img id="p2Flagimg" class="countryFlag" type="image" width="30" height="30">
+                                <label for="p2LoserMark">L</label>
+                                <input class="lssc-input" id="p2LoserMark" type="checkbox">
+                                <input class="lssc-input" id="p2Score" title="P2 Score" type="spinner" value="0" min="0" onchange="onScoreChange('p2')">
+                            </div>
+                            <button onclick="resetVal('p2Sponsor,p2Name,p2Flag,p2Flagimg,p2LoserMark,p2Score,p2Twitter,p2Pronoun,p2ID')" autocomplete="off">Reset</button>
+                            <label id="p2ID"></label>
+                        </fieldset>
+                    </div>
+                    <div class="accordion">
+                        <h3>Details</h3>
+                        <div class="vertLayout">
+                            <fieldset>
+                                <legend>Player 1</legend>
+                                <div class="vertLayout">
+                                    <div class="horiLayout">
+                                        <label for="p1Twitter">Twitter</label>
+                                        <input class="lssc-input" id="p1Twitter" title="P1 Twitter" >
+                                    </div>
+                                    
+                                    <div class="horiLayout">
+                                        <label for="p1Pronoun">Pronoun</label>
+                                        <input class="lssc-input" id="p1Pronoun" title="P1 Pronoun" >
+                                    </div>
+                                    <div class="dropdown">
+                                        <button onclick="toggleDD('p1CharDD')" class="dropbtn" id="p1Char" ></button>
+                                        <div id="p1CharDD" class="dropdown-content">
+                                            <input type="text" id="p1CharSearch" placeholder="Search..." class="searchbar" onkeyup="filterFunction('p1CharDD', 'p1CharSearch')">
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Player 2</legend>
+                                <div class="vertLayout">
+                                    <div class="horiLayout">
+                                        <label for="p2Twitter">Twitter</label>
+                                        <input class="lssc-input" id="p2Twitter" title="P2 Twitter" >
+                                    </div>
+                                    <div class="horiLayout">
+                                        <label for="p2Pronoun">Pronoun</label>
+                                        <input class="lssc-input" id="p2Pronoun" title="P2 Pronoun" >
+                                    </div>
+                                    <div class="dropdown">
+                                        <button onclick="toggleDD('p2CharDD')" class="dropbtn" id="p2Char" ></button>
+                                        <div id="p2CharDD" class="dropdown-content">
+                                            <input type="text" id="p2CharSearch" placeholder="Search..." class="searchbar" onkeyup="filterFunction('p2CharDD', 'p2CharSearch')">
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="horiLayout">
+                        <button class="lssc-input" onclick="swapVal('p1Sponsor,p1Name,p1Flag,p1Flagimg,p1LoserMark,p1Score,p1Twitter,p1Pronoun,p1Char,p1ID','p2Sponsor,p2Name,p2Flag,p2Flagimg,p2LoserMark,p2Score,p2Twitter,p2Pronoun,p2Char,p2ID')" autocomplete="off">Swap</button>
+                        <button class="lssc-input" onclick="resetVal('p1Sponsor,p1Name,p1Flag,p1Flagimg,p1LoserMark,p1Score,p1ID,p2Sponsor,p2Name,p2Flag,p2Flagimg,p2LoserMark,p2Score,p1Twitter,p2Twitter,p1Pronoun,p2Pronoun,p2ID')"autocomplete="off">Reset</button>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion" id="tab2">
+                <h3>Game/Stage</h3>
+                <div class="vertLayout">
+                    <div class="horiLayout">
+                        <div class="label">Game:</div>
+                        <select class="lssc-input" id="game" dataSet="games" dataField="1" title="Select game being played" onchange="gameChange()">
+                            <option>Street Fighter 6</option>
+                            <option>Tekken 7</option>
+                            <option>Guilty Gear -Strive-</option>
+                            <option>King of Fighters XV</option>
+                            <option>Mortal Kombat 1</option>
+                            <option>BlazBlue: Central Fiction</option>
+                            <option>Guilty Gear Xrd REV 2</option>
+                            <option>Under Night In-Birth Exe:Late[cl-r]</option>
+                            <option>Guilty Gear XX Accent Core Plus R</option>
+                            <option>Ultimate Marvel vs. Capcom 3</option>
+                            <option>Skullgirls: 2nd Encore</option>
+                            <option>Dragon Ball FighterZ</option>
+                            <option>Samurai Shodown</option>
+                            <option>Pokkén Tournament DX</option>
+                            <option>Melty Blood: Type Lumina</option>
+                            <option>Killer Instinct</option>
+                            <option>Virtua Fighter 5: Ultimate Showdown</option>
+                            <option>Divekick</option>
+                            <option>Persona 4 Arena Ultimax</option>
+                            <option>MOBILE SUIT GUNDAM EXTREME VS MAXIBOOST ON</option>
+                            <option>Them's Fightin' Herds</option>
+                            <option>The King of Fighters '98</option>
+                            <option>Taiko no Tatsujin</option>
+                            <option>Vampire Savior</option>
+                            <option>Kamen Rider: Super Climax Heroes</option>
+                            <option>The King of Fighters 2002</option>
+                            <option>Advanced V.G. 2</option>
+                            <option>Kill la Kill: If</option>
+                            <option>DNF Duel</option>
+                            <option>Touhou 12.3 Hisoutensoku</option>
+                            <option>The King of Fighters XIII</option>
+                            <option>Melty Blood: Actress Again: Current Code</option>
+                            <option>Armored Core 6</option>
+                            <option>Just Dance 2022</option>
+                            <option>Street Fighter 3: Third Strike</option>
+                            <option>Mario Kart 8: 2v2</option>
+                        </select>
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">Round:</div>
+
+                        <select class="lssc-input" id="mText2">
+                            <option value="Casuals">Casuals</option>
+                            <option value="OCE Weekly">OCE Weekly</option>
+                            <option value="Money Match">Money Match</option>
+                            <option value="Tournament">Tournament</option>
+                            <option value="Exhibition Match">Exhibition Match</option>
+                            <option value="Pools">Pools</option>
+                            <option value="Pools (Losers)">Pools (Losers)</option>
+                            <option value="Winners Side">Winners Side</option>
+                            <option value="Losers Side">Losers Side</option>
+                            <option value="Top 8">Top 8</option>
+                            <option value="Winners Semis">Winners Semis</option>
+                            <option value="Losers Top 8">Losers Top 8</option>
+                            <option value="Losers Semi">Losers Semi</option>
+                            <option value="Winners Final">Winners Final</option>
+                            <option value="Losers Final">Losers Final</option>
+                            <option value="Grand Final">Grand Final</option>
+                            <option value="Grand Final Reset">Grand Final Reset</option>
+                        </select>
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">Group:</div>
+                        <select class="lssc-input" id="gameGroup" dataSet="games" preReq="game" dataField="2" title="Actual stage of tournament"></select>
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">PhaseId:</div>
+                        <select class="lssc-input" id="phaseId" dataSet="games" preReq="gameGroup" dataField="3" title="Used for bracket viewer" disabled="true"></select>
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">Bracket URL:</div>
+                        <input class="lssc-input" id="bracketUrl" dataSet="games" preReq="phaseId" finalVal="true" dataField="start.gg/#FIELD5#/brackets/#FIELD6#/#FIELD3#" token="FIELD" title='Change by "!EditCommand !Bracket -URL-"'>
+                        <button autocomplete='off' >Copy URL</button>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion" id="tab3">
+                <h3>Event</h3>
+                <div class="vertLayout">
+                    <div class="horiLayout">
+                        <div class="label">Name:</div>
+                        <input class="lssc-input" id="mTxt1" title="Event Name"></input>
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">Subtitle:</div>
+                        <input class="lssc-input" id="mText3">
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">Idle Msg:</div>
+                        <input class="lssc-input" id="msgText" title="Message for Away Screen">
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">Bottom Left:</div>
+                        <input class="lssc-input" id="btmL" title="Bottom Left in Scoreboard page">
+                    </div>
+                    <div class="horiLayout">
+                        <div class="label">Bottom Right:</div>
+                        <input class="lssc-input" id="btmR" title="Bottom Right in Scoreboard page">
+                    </div>
+                </div>
+            </div>
+            <div class="accordion" id="tab4">
+                <h3>Commentary</h3>
+                <div class="vertLayout">
+                    <fieldset>
+                        <legend>Commentator LHS</legend>
+                        <div class="controlgroup horiLayout">
+                            <input class="lssc-input" id="c1Name" title="Commentator Name LHS">
+                            <input class="lssc-input" id="c1Twitter" title="Twitter LHS">
+                            <button onclick="resetVal('c1Name,c1Twitter')" autocomplete='off' >Reset Comm1</button>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Commentator RHS</legend>
+                        <div class="controlgroup horiLayout">
+                            <input class="lssc-input" id="c2Name" title="Commentator Name RHS">
+                            <input class="lssc-input" id="c2Twitter" title="Twitter RHS">
+                            <button onclick="resetVal('c2Name,c2Twitter')" autocomplete='off' >Reset Comm2</button>
+                        </div>
+                    </fieldset>
+                    <button class="lssc-input" onclick="swapVal('c1Name,c1Twitter', 'c2Name,c2Twitter')" autocomplete="off">Swap</button>
+                </div>
+            </div>
+            <div class="accordion" id="tab5">
+                <h3>Bracket Info</h3>
+                <div class="vertLayout">
+                    <div class="congrolgroup horiLayout">
+                        <div class="label">Start.gg</div>
+                        <label class="switch">
+                            <input type="checkbox" id="bracketChecked">
+                            <span class="slider round"></span>
+                        </label>
+                        <div class="label">Challonge</div>
+                    </div>
+                    <fieldset>
+                        <legend>Start.gg</legend>
+                        <div class="vertLayout">
+                            <div class="controlgroup horiLayout">
+                                <div class="label">Start.gg Token</div>
+                                <input type="password" class="lssc-input" id="startggToken" title="Start.gg Token" onchange="setPlayerList()">
+                            </div>
+                            <div class="controlgroup horiLayout">
+                                <div class="label">Startgg Bracket</div>
+                                <input class="lssc-input" id="startggID" title="Start.gg Bracket ID" onchange="setPlayerList()">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Challonge</legend>
+                        <div class="vertLayout">
+                            <div class="controlgroup horiLayout">
+                                <div class="label" for="challongeAPI">Challonge API Key</div>
+                                <input type="password" class="lssc-input" id="challongeAPI" title="Challonge API Key" onchange="setPlayerList()">
+                            </div>
+                            <div class="controlgroup horiLayout">
+                                <div class="label" for="challongeID">Bracket ID</div>
+                                <input class="lssc-input" id="challongeID" title="Challonge Bracket ID" onchange="setPlayerList()">
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <button onclick="openDialog()">Settings</button>
+        <div id="settings">
+            <div class="vertLayout">
+                <fieldset>
+                    <legend>Settings</legend>
+                    <div class="controlgroup horiLayout">
+                        <label>Current Magnification: </label>
+                        <label id="ui-scaling-value"></label>
+                    </div>
+                    <div id="ui-scaling-slider"></div>
+                    <div class="controlgroup horiLayout">
+                        <label for="bScoreAuto">Auto-Save Score</label>
+                        <input class="lssc-input" id="bScoreAuto" type="checkbox">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="bSetPair">Enable Set Pairing</label>
+                        <input class="lssc-input" id="bSetPair" type="checkbox">
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </body>
+</html>
