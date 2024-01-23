@@ -1,0 +1,236 @@
+<html>
+    <head>
+        <title>Overlay Helper</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+        <script src="scripts/panel.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="scripts/panel.css">
+    </head>
+    <body onload="startup()">
+        <div class="topHeading">
+            <div>
+                <button id="save" onclick="save()">Save</button>
+                <button id="reload" onclick="reload()">Reload</button>
+            </div>
+            <div>
+                <button id="expand">Expand</button>
+                <button id="collapse">Collapse</button>
+            </div>
+        </div>
+        <div id="lssc-panels">
+            <div class="accordion" id="tab1">
+                <h3>Scoreboard</h3>
+                <div class="vertLayout">
+                    <div class="horiLayout">
+                        <fieldset>
+                            <legend>Player 1</legend>
+                            <div class="controlgroup horiLayout">
+                                <input class="sponsor" id="p1Sponsor" title="P1 Sponsor" oninput="onNameChange('p1')">
+                                <input class="name" id="p1Name" title="P1 Name" oninput="onNameChange('p1')">
+                                <input class="flag" id="p1Flag" title="P1 Country" oninput="onFlagChange('p1')">
+                                <input class="state" id="p1State" title="P1 State" oninput="onStateChange('p1')">
+                                <img id="p1Flagimg" class="countryFlag" type="image" for="p1Flag" >
+                                <label for="p1LoserMark">L</label>
+                                <input id="p1LoserMark" type="checkbox">
+                                <input class="score" id="p1Score" title="P1 Score" type="spinner" value="0" min="0">
+                                <span id="p1ID"></span>
+                            </div>
+                            <button onclick="reset('p1Sponsor,p1Name,p1Flag,p1Flagimg,p1LoserMark,p1Score,p1Twitter,p1Pronoun,p1ID')">Reset</button>
+                        </fieldset>
+                    </div>
+                    <div class="horiLayout">
+                        <fieldset>
+                            <legend>Player 2</legend>
+                            <div class="controlgroup horiLayout">
+                                <input class="sponsor" id="p2Sponsor" title="P2 Sponsor" oninput="onNameChange('p2')">
+                                <input class="name" id="p2Name" title="P2 Name" oninput="onNameChange('p2')">
+                                <input class="flag" id="p2Flag" title="P2 Country" oninput="onFlagChange('p2')">
+                                <input class="state" id="p2State" title="P2 State" oninput="onStateChange('p2')">
+                                <img id="p2Flagimg" class="countryFlag" type="image" for="p2Flag">
+                                <label for="p2LoserMark">L</label>
+                                <input id="p2LoserMark" type="checkbox">
+                                <input class="score" id="p2Score" title="P2 Score" type="spinner" value="0" min="0">
+                                <span id="p2ID"></span>
+                            </div>
+                            <button onclick="reset('p2Sponsor,p2Name,p2Flag,p2Flagimg,p2LoserMark,p2Score,p2Twitter,p2Pronoun,p2ID')">Reset</button>
+                        </fieldset>
+                    </div>
+                    <div class="accordion">
+                        <h3>Details</h3>
+                        <div class="vertLayout">
+                            <fieldset>
+                                <legend>Player 1</legend>
+                                <div class="vertLayout">
+                                    <div class="horiLayout">
+                                        <label for="p1Twitter">Twitter</label>
+                                        <input id="p1Twitter" title="P1 Twitter" autocomplete="off">
+                                    </div>
+                                    <div class="horiLayout">
+                                        <label for="p1Pronoun">Pronoun</label>
+                                        <input id="p1Pronoun" title="P1 Pronoun" autocomplete="off">
+                                    </div>
+                                    <ol class="charSelect" id="p1Char">
+                                    </ol>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Player 2</legend>
+                                <div class="vertLayout">
+                                    <div class="horiLayout">
+                                        <label for="p2Twitter">Twitter</label>
+                                        <input id="p2Twitter" title="P2 Twitter" autocomplete="off">
+                                    </div>
+                                    <div class="horiLayout">
+                                        <label for="p2Pronoun">Pronoun</label>
+                                        <input id="p2Pronoun" title="P2 Pronoun" autocomplete="off">
+                                    </div>
+                                    <ol class="charSelect" id="p2Char">
+                                    </ol>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="horiLayout">
+                        <button onclick="swap('p1Sponsor,p1Name,p1Flag,p1Flagimg,p1LoserMark,p1Score,p1Twitter,p1Pronoun,p1ID','p2Sponsor,p2Name,p2Flag,p2Flagimg,p2LoserMark,p2Score,p2Twitter,p2Pronoun,p2ID')">Swap</button>
+                        <button onclick="reset('p1Sponsor,p1Name,p1Flag,p1Flagimg,p1LoserMark,p1Score,p1Twitter,p1Pronoun,p1ID,p2Sponsor,p2Name,p2Flag,p2Flagimg,p2LoserMark,p2Score,p2Twitter,p2Pronoun,p2ID')">Reset</button>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion" id="tab2">
+                <h3>Set Pairing</h3>
+                <div class="vertLayout">
+                    <div class="controlgroup horiLayout">
+                        <label for="bSetPair">Enable Set Pairing</label>
+                        <input id="bSetPair" class="checkbox" type="checkbox" onclick="toggleSetPair()">
+                        <span id="setFetchError" style="color: red"></span>
+                    </div>
+                    <fieldset id="setPairedFieldset" style="opacity: 0">
+                        <legend>Set Pairing Settings</legend>
+                        <div class="horiLayout">
+                            <label>Select Set: </label>
+                            <select id="setPaired" title="Unplayed Sets">
+                            </select>
+                        </div>
+                        <div class="horiLayout">
+                            <label>Select Pool: </label>
+                            <select id="setPool" title="Select Pool" onchange="onPoolChange()">
+                            </select>
+                        </div>
+                        <div class="horiLayout">
+                            <label>Backet: </label>
+                            <select id="setBracket" title="Select Bracket" onchange="onBracketChange()">
+                            </select>
+                        </div>
+                        <button onclick="applySet()">Apply</button>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="accordion" id="tab3">
+                <h3>Game/Stage</h3>
+                <div class="vertLayout">
+                    <div class="horiLayout">
+                        <div class="label">Game:</div>
+                        <select id="game" title="Select game being played" onchange="onGameChange()">
+                        </select>
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="round">Round:</label>
+                        <input id="round">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="misc1">Misc 1:</label>
+                        <input id="misc1">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="misc2">Misc 2:</label>
+                        <input id="misc2">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="misc3">Misc 3:</label>
+                        <input id="misc3">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="misc4">Misc 4:</label>
+                        <input id="misc4">
+                    </div>
+                </div>
+            </div>
+            <div class="accordion" id="tab4">
+                <h3>Commentary</h3>
+                <div class="vertLayout">
+                    <fieldset>
+                        <legend>Commentator 1</legend>
+                        <div class="controlgroup horiLayout">
+                            <input id="c1Name" title="Commentator 1 Name">
+                            <input id="c1Twitter" title="Commentator 1 Twitter">
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Commentator 2</legend>
+                        <div class="controlgroup horiLayout">
+                            <input id="c2Name" title="Commentator 2 Name">
+                            <input id="c2Twitter" title="Commentator 2 Twitter">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="accordion" id="tab5">
+                <h3>Bracket Details</h3>
+                <div class="vertLayout">
+                    <div class="controlgroup horiLayout">
+                        <label for="urlAuto">Json URL</label>
+                        <input class="checkbox" type="checkbox" id="urlAuto">
+                        <input for="urlAuto" id="jsonURL" title="Url of JSON file">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="startggAuto">Start.gg</label>
+                        <input class="checkbox" type="checkbox" id="startggAuto" onclick="autoToggle('startgg')">
+                        <input for="startggAuto" id="startggID" title="Start.gg Event Name">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="challongeAuto">Challonge</label>
+                        <input class="checkbox" type="checkbox" id="challongeAuto" onclick="autoToggle('challonge')">
+                        <input for="challongeAuto" id="challongeID" title="Challonge Bracket ID">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <span id="fetchDescription"></span>
+                        <span>&nbsp;</span>
+                        <span id="fetchError" style="color: red"></span>
+                    </div>
+                    <button onclick="fetch()">Apply</button>
+                </div>
+            </div>
+            <div class="accordion" id="tab6">
+                <h3>Authentications</h3>
+                <div class="vertLayout">
+                    <div class="controlgroup horiLayout">
+                        <label for="startggToken">Start.gg Token</label>
+                        <input type="password" id="startggToken" title="Start.gg Token from Developer Settings">
+                    </div>
+                    <div class="controlgroup horiLayout">
+                        <label for="challongeAPI">Challonge API</label>
+                        <input type="password" id="challongeAPI" title="Challonge API from Developer API in Settings">
+                    </div>
+                </div>
+            </div>
+            <button style="width: 70rem" onclick="openDialog()">Settings</button>
+            <div id="settings">
+                <div class="vertLayout">
+                    <fieldset>
+                        <legend>Settings</legend>
+                        <div class="controlgroup horiLayout">
+                            <label>Current Magnification: </label>
+                            <label id="ui-scaling-value"></label>
+                        </div>
+                        <div id="ui-scaling-slider"></div>
+                        <div class="controlgroup horiLayout">
+                            <label for="bScoreAuto">Auto-Save Score</label>
+                            <input id="bScoreAuto" type="checkbox">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

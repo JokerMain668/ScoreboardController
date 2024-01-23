@@ -1,47 +1,143 @@
+class Player {
+    constructor(name, sponsor, country, state, twitter, pronoun, id) {
+        this.name = name;
+        this.sponsor = sponsor;
+        this.country = country;
+        this.state = state;
+        this.twitter = twitter;
+        this.pronoun = pronoun;
+        this.id = id;
+    }
+    fullTag() {
+        if (this.sponsor == "") return this.name;
+        else return this.sponsor + " | " + this.name;
+    }
+}
+class Set {
+    constructor(round, player1, player2) {
+        this.round = round;
+        this.player1 = player1;
+        this.player2 = player2;
+    }
+}
+
+var fetchfirstComplete = 0;
+function startup() {
+    fetchFirst();
+    checkFlag();
+
+    function checkFlag() {
+        if (fetchfirstComplete < 3) {
+            setTimeout(checkFlag, 100);
+        } else {
+            fetchSecond();
+            init();
+        }
+    }
+}
+
 var JSONtxt = {
     p1Name: "",
     p2Name: "",
     p1Sponsor: "",
     p2Sponsor: "",
-    round: "",
-    p1Flag: "",
-    p2Flag: "",
-    p1LoserMark: false,
-    p2LoserMark: false,
     p1Score: 0,
     p2Score: 0,
+    p1LoserMark: false,
+    p2LoserMark: false,
+    p1Flag: "",
+    p2Flag: "",
     p1Twitter: "",
     p2Twitter: "",
-    p1Char: "",
-    p2Char: "",
-    p1ID: "",
-    p2ID: "",
     p1Pronoun: "",
     p2Pronoun: "",
-    Game: "",
-    EvtName: "",
-    p1Comm: "",
-    p2Comm: "",
-    bracketChecked: false,
-    startggToken: "",
-    startggID: "",
-    ChallongeAPI: "",
-    ChallongeID: "",
-    btmL: "",
-    btmR: "",
-    scaleVal: 1,
-    bScoreAuto: false,
-    bSetPair: false
+    p1ID: "",
+    p2ID: "",
+    game: "Street Fighter 6",
+    round: "",
 }
 
-var charList;
-var playerList = {};
-var setsList = {};
-var flagJSON;
-var p1Player = null;
-var p2Player = null;
+var apiSave = {
+    jsonAuto: false,
+    jsonURL: "",
+    startggID: "",
+    startggToken: "",
+    startggAuto: false,
+    challongeID: "",
+    challongeAPI: "",
+    challongeAuto: false
+}
+
+///////////////////////////
+////// Players Array //////
+///////////////////////////
+
+/*
+{
+    value: Player Name
+    sponsor: Prefix
+    flag: State / Country
+}
+*/
+var players = {};
+var sets = {};
+var playersArr = [];
+
+var flags = [];
+var countries = [];
+var states = [];
+var countriesWithStates = ['AUS'];
+var charList = [];
+
+var rounds = [];
+
+function fetchFirst() {
+    $.getJSON('autocomplete/rounds.json', function(result) {
+        $.each(result, function(i, field) {
+            rounds.push(field);
+        });
+        fetchfirstComplete++;
+    });
+
+    $.getJSON('json/country-flags.json', function(result) {
+        fetchfirstComplete++;
+        $.each(result, function(k, v) {
+            var val = {
+                value: v,
+                full: k
+            }
+            flags.push(val);
+            countries.push(v);
+        });
+    });
+    
+    $.getJSON('json/games.json', function(result) {
+        var old = false;
+        var optgroup = $("<optgroup label='Old Titles'>");
+        $.each(result, function(i, field) {
+            if (field.Full == "Old Titles") old = true;
+            else {
+                if (old) {
+                    optgroup.append("<option value=" + field.code + ">" + field.Full + "</option>");
+                }
+                else {
+                    $('#game').append("<option value=" + field.code + ">" + field.Full + "</option>");
+                }
+            }
+        });
+        $('#game').append(optgroup);
+        onGameChange();
+        fetchfirstComplete++;
+    });
+}
+
+function fetchSecond() {
+    load();
+    fetch();
+}
 
 function init() {
+
     $(".accordion").accordion({
         active: false,
         collapsible: true,
@@ -57,28 +153,29 @@ function init() {
         max: 1.5,
         step: 0.125,
         slide: function(event, ui) {
-            $('#ui-scaling-value').html(ui.value + 'x');
+            $("#ui-scaling-value").html(ui.value + 'x');
             $('html').css('font-size', ui.value + 'px');
         }
     });
 
-    $('#settings').dialog({
+    $("#settings").dialog({
         width: 300,
         show: true,
         autoOpen: false
     });
 
-    $('#p1Sponsor').autocomplete().width('50rem');
-    $('#p1Name').autocomplete().width('110rem');
-    $('#p1Flag').autocomplete().width('50rem');
-    $('#p2Sponsor').autocomplete().width('50rem');
-    $('#p2Name').autocomplete().width('110rem');
-    $('#p2Flag').autocomplete().width('50rem');
-    $("#startggToken").autocomplete().width('250rem');
-    $("#challongeAPI").autocomplete().width('250rem');
+    $('#round').autocomplete({
+        minLength: 0,
+        source: rounds,
+        select: function(event, ui) {
+            $('#round').val(ui.item);
+        }
+    });
 
-    $("#p1Score").spinner().width('20rem');
-    $("#p2Score").spinner().width('20rem');
+    TFautocomplete("p1");
+    TFautocomplete("p2");
+
+    $('.score').spinner().width('20rem');
 
     $(document).tooltip({
         content: function() {
@@ -90,436 +187,104 @@ function init() {
         }
     });
 
-    var xhr = new XMLHttpRequest();
-    xhr.overrideMimeType('application/json');
-    xhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/json/flags.json?ref=main');
-    xhr.send();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            flagJSON = JSON.parse(atob(JSON.parse(xhr.responseText)['content']));
-            storeDataList();
-            loadOldStorage();
-            setInterval(function() {
-                // console.log(p1Player);
-                // console.log(p2Player);
-                if ( p1Player == undefined || $('#p1ID').html() != p1Player.id) {
-                    onIDChange('p1');
-                }
-                if (p2Player == undefined || $('#p2ID').html() != p2Player.id) {
-                    onIDChange('p2');
-                }
-                if ($('#bScoreAuto').is(':checked')) {
-                    if (JSONtxt.p1Score != parseInt($('#p1Score').val())) {
-                        JSONtxt.p1Score = parseInt($("#p1Score").val());
-                        localStorage.setItem("JSON", JSON.stringify(JSONtxt));
-                        console.log(localStorage.getItem("JSON"));
-                    }
-                    if (JSONtxt.p2Score != parseInt($('#p2Score').val())) {
-                        JSONtxt.p2Score = parseInt($("#p2Score").val());
-                        localStorage.setItem("JSON", JSON.stringify(JSONtxt));
-                        console.log(localStorage.getItem("JSON"));
-                    }
-                }
-            }, 200);
-            setInterval(function() {
-                if ($('#bSetPair').is(':checked')) {
-                    fetchBracket();
-                }
-            }, 1000);
+    $('.charSelect').selectable({
+        selected: function(event, ui) {
+            $(ui.selected).addClass('ui-selected').siblings().removeClass('ui-selected');
         }
-    }
-
-    function storeDataList() {
-        var nameArr = [];
-        var subArr = [];
-        for (let i = 0; i < flagJSON.length; i++) {
-            nameArr.push(flagJSON[i]["Code"]);
-            subArr.push(flagJSON[i]["Name"]);
-        }
-        autocomplete(document.getElementById('p1Flag'), nameArr, subArr, null, null);
-        autocomplete(document.getElementById('p2Flag'), nameArr, subArr, null, null);
-    }
-}
-
-function loadOldStorage() {
-    var data = JSON.parse(localStorage.getItem("JSON"));
-    console.log(data);
-    $("#game").val(data.Game)
-
-    $("#p1Sponsor").val(data.p1Sponsor);
-    $("#p1Name").val(data.p1Name);
-    $('#p1LoserMark').val(data.p1LoserMark);
-    $('#p1ID').html(data.p1ID);
-    $("#p2Sponsor").val(data.p2Sponsor);
-    $("#p2Name").val(data.p2Name);
-    $('#p2LoserMark').val(data.p2LoserMark);
-    $('#p2ID').html(data.p2ID);
-    $("#p1Score").val(data.p1Score);
-    $("#p2Score").val(data.p2Score);
-    $("#mText2").val(data.round);
-    $("#p1Flag").val(data.p1Flag);
-    $("#p2Flag").val(data.p2Flag);
-    flagChange("p1Flag");
-    flagChange("p2Flag");
-
-    $("#p1Pronoun").val(data.p1Pronoun);
-    $("#p2Pronoun").val(data.p2Pronoun);
-    $("#p1Twitter").val(data.p1Twitter);
-    $("#p2Twitter").val(data.p2Twitter);
-
-    $("#mTxt1").val(data.EvtName);
-    $("#c1Name").val(data.p1Comm);
-    $("#c2Name").val(data.p2Comm);
-
-    $("#bracketChecked").prop("checked", data.bracketChecked);
-    $("#startggToken").val(data.startggToken);
-    $("#startggID").val(data.startggID);
-    $("#challongeAPI").val(data.ChallongeAPI);
-    $("#challongeID").val(data.ChallongeID);
-    $("#btmTxt").val(data.btmTxt);
-
-    $("#ui-scaling-slider").slider('value', data.scaleVal);
-    $("#ui-scaling-value").html(data.scaleVal + 'x');
-    $('html').css('font-size', data.scaleVal + 'px');
-    $('#bScoreAuto').prop('checked', data.bScoreAuto);
-    $('#bSetPair').prop('checked', data.bSetPair);
+    });
     
-    gameChange();
-    save();
 }
 
-function gameChange() {
-    var game = $('#game option:selected').text();
-    switch(game) {
-        case 'Street Fighter 6':
-            setCharList('sf6.json');
-            break;
-        case 'Tekken 7':
-            setCharList('tekken.json');
-            break;
-        case "Guilty Gear Xrd REV 2":
-            setCharList('ggxrd.json');
-            break;
-        case "King of Fighters XV":
-            setCharList('kofxv.json');
-            break;
-        case "Granblue Fantasy: Versus":
-            setCharList('gbvs.json');
-            break;
-        case "BlazBlue: Central Fiction":
-            setCharList('bbcf.json');
-            break;
-        case "Under Night In-Birth Exe:Late[cl-r]":
-            setCharList('uniclr.json');
-            break;
-        default:
-            setCharList('ggst.json');
-            break;
-    }
-    allocateBracket();
-}
+///////////////////////////////
+// TextField Auto-Completion //
+///////////////////////////////
 
-//
-// Player Functions and Class
-//
+function TFautocomplete(wrap) {
+    $('#' + wrap + 'Name').autocomplete({
+        minLength: 1,
+        source: playersArr,
+        select: function(event, ui) {
+            $("#" + wrap + "Name").val(ui.item.label);
+            $("#" + wrap + "Sponsor").val(ui.item.sponsor);
+            $("#" + wrap + "Flag").val(ui.item.flag);
+            $("#" + wrap + "Flagimg").css("opacity", 0);
 
-class Player {
-    constructor(id, name, sponsor, state, twitter, pronoun) {
-        this.id = id;
-        this.name = name;
-        this.sponsor = sponsor;
-        this.state = state;
-        this.twitter = twitter;
-        this.pronoun = pronoun;
-    }
-    fullname() {
-        if (this.sponsor == '') return this.name;
-        else return this.sponsor + ' | ' + this.name;
-    }
-
-}
-
-function setPlayerList() {
-    playerList = {};
-    if ($('#bracketChecked').is(':checked')) {
-        var xhr = new XMLHttpRequest();
-        xhr.overrideMimeType('application/json');
-        xhr.open('GET', 'https://api.challonge.com/v1/tournaments/' + $('#challongeID').val() + '/participants.json?api_key=vZkf4w2kmecEnQq4f8f01ZAadsJVihCMlrkuSWtc')
-        xhr.send();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                var data = JSON.parse(xhr.responseText);
-                var nameArr = [];
-                var subArr = [];
-                var idArr = [];
-                for (let i = 0; i < Object.keys(data).length; i++) {
-                    var playerData = data[i]['participant'];
-                    var player = new Player(playerData['id'], playerData['display_name'], '', '', '', '');
-                    playerList[playerData['id']] = player;
-                    nameArr.push(playerData['display_name']);
-                    subArr.push('');
-                    idArr.push(playerData['id']);
-                }
-                autocomplete(document.getElementById('p1Name'), nameArr, subArr, idArr, document.getElementById('p1ID'));
-                autocomplete(document.getElementById('p2Name'), nameArr, subArr, idArr, document.getElementById('p2ID'));
-
-                console.log('playerList');
-                console.log(playerList);
-                p1Player = playerList[$('#p1ID').html()];
-                p2Player = playerList[$('#p2ID').html()];
+            if (countries.includes(ui.item.flag)) {
+                $("#" + wrap + "Flagimg").attr("src", "img/flags/" + ui.item.flag + ".svg");
+                $("#" + wrap + "Flagimg").css("opacity", 1);
             }
-        }
-        
-    } else {
-        var xhr = new XMLHttpRequest();
-        xhr.overrideMimeType('application/json');
-        const parseQuery = {
-            query: `query {
-                event(id: ` + $('#startggID').val() + `) {
-                    entrants(query: {
-                        page: 1
-                        perPage: 500
-                    }) {
-                        nodes {
-                            participants {
-                                id
-                                gamerTag
-                                prefix
-                                user {
-                                    location {
-                                        country
-                                        state
-                                    }
-                                    authorizations(
-                                        types: TWITTER
-                                    ) {
-                                        externalUsername
-                                    }
-                                    genderPronoun
-                                }
-                            }
-                        }
-                    }
-                }
-            }`
-        }
-        xhr.open('POST', 'https://api.start.gg/gql/alpha', true);
-        xhr.setRequestHeader('Authorization', 'Bearer ' + $('#startggToken').val());
-        xhr.setRequestHeader('Content-type', 'application/json');
-        xhr.send(JSON.stringify(parseQuery));
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                var data = JSON.parse(xhr.responseText)['data']['event']['entrants']['nodes'];
-                var nameArr = [];
-                var subArr = [];
-                var idArr = [];
-                for (let i = 0; i < Object.keys(data).length; i++) {
-                    var playerData = data[i]['participants'][0];
-                    var sponsor = playerData['prefix'] == null ? '' : playerData['prefix'];
-                    var state = '';
-                    var twitter = '';
-                    var pronoun = '';
-                    if (playerData['user']['location']['country'] != null) {
-                        if (playerData['user']['location']['country'] == "Australia" && playerData['user']['location']['state'] != null) {
-                            state = playerData['user']['location']['state'];
-                        } else {
-                            for (let i = 0; i < flagJSON.length; i++) {
-                                if (flagJSON[i]['Name'] == playerData['user']['location']['country']) {
-                                    state = flagJSON[i]['Code'];
-                                }
-                            }
-                        }
-                    }
-                    if (playerData['user']['authorizations'] != null) {
-                        twitter = playerData['user']['authorizations'][0]['externalUsername'];
-                    }
-                    if (playerData['user']['genderPronoun'] != null) {
-                        pronoun = playerData['user']['genderPronoun'];
-                    }
-                    var player = new Player(playerData['id'], playerData['gamerTag'], sponsor, state, twitter, pronoun);
-                    playerList[player['id']] = player;
-                    nameArr.push(playerData['gamerTag']);
-                    subArr.push(sponsor);
-                    idArr.push(playerData['id']);
-                }
-                console.log('playerList');
-                console.log(playerList);
-                autocomplete(document.getElementById('p1Name'), nameArr, subArr, idArr, document.getElementById('p1ID'));
-                autocomplete(document.getElementById('p2Name'), nameArr, subArr, idArr, document.getElementById('p2ID'));
 
-                p1Player = playerList[$('#p1ID').html()];
-                p2Player = playerList[$('#p2ID').html()];
+            $("#" + wrap + "State").val(ui.item.state);
+            $("#" + wrap + "Twitter").val(ui.item.twitter);
+            $("#" + wrap + "Pronoun").val(ui.item.pronoun);
+            $("#" + wrap + "ID").html(ui.item.id);
+        }
+    }).autocomplete("instance")._renderItem = function(ul, item) {
+        if (item.flag) {
+            if (item.state && countriesWithStates.includes(item.flag)) {
+                return $("<li>")
+                    .append("<div><img src='img/flags/" + item.flag + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 105rem'>" +
+                    "<img src='img/flags/" + item.flag + "/" + item.state + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" 
+                    + item.value + "<br><span style='font-size: 8rem'>" + item.sponsor + "</span></div>")
+                    .appendTo(ul);
             }
-            
+            return $("<li>")
+                .append("<div><img src='img/flags/" + item.flag + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" 
+                + item.value + "<br><span style='font-size: 8rem'>" + item.sponsor + "</span></div>")
+                .appendTo(ul);
+        } else {
+            return $("<li>")
+            .append("<div>" + item.value + "<br><span style='font-size: 8rem'>" + item.sponsor + "</span></div>")
+                .appendTo(ul);
         }
-    }
-}
+    };
 
-//
-// Character Functions
-//
-
-function setCharList(url) {
-    var xhr = new XMLHttpRequest();
-    xhr.overrideMimeType('application/json');
-    xhr.open('GET', 'https://api.github.com/repos/jokermain668/ScoreboardController/contents/json/' + url + '?ref=main');
-    xhr.send();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            charList = JSON.parse(atob(JSON.parse(xhr.responseText)['content']));
-            charDump('p1Char');
-            charDump('p2Char');
+    $('#' + wrap + 'Flag').autocomplete({
+        minLength: 1,
+        source: flags,
+        select: function(event, ui) {
+            $("#" + wrap + "Flag").val(ui.item.value);
+            $("#" + wrap + "Flagimg").attr("src", "img/flags/" + ui.item.value + ".svg");
+            $("#" + wrap + "Flagimg").css("opacity", 1);
         }
-    }
+    }).autocomplete("instance")._renderItem = function(ul, item) {
+        return $("<li>")
+            .append("<div><img src='img/flags/" + item.value + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" + item.value + "<br><span style='font-size: 8rem'>" + item.full + "</span></div>")
+            .appendTo(ul);
+    };
 }
 
-function charDump(string) {
-    $('#' + string + 'DD').find('a').remove();
-    changeChar(string, charList[0]['Name']);
-    for (let i = 0; i < charList.length; i++) {
-        var name = charList[i]['Name'];
-        var img = charList[i]['img'];
-        $('#' + string + 'DD').append(`<a style="background-image: url(${img})" onclick="changeChar('${string}', '${name}')">${name}</a>`);
-    }
-}
-
-
-//
-// On Change Functions //
-//
-
-function changeChar(id, char) {
-    $('#' + id).html(char);
-    var index = 0;
-    for (let i = 0; i < charList.length; i++) {
-        if (charList[i]['Name'] == char) {
-            index = i;
-            break;
-        }
-    }
-    $("#" + id).attr('style', 'background-image: url('+ charList[index]['img'] + ')');
-}
-
-function flagChange(string) {
-    setTimeout(() => {
-        var value = $("#" + string).val();
-        for (var i = 0; i < flagJSON.length; i++) {
-            if (flagJSON[i]["Code"] == value) {
-                $('#' + string + 'img').css('opacity', 1);
-                $('#' + string + 'img').attr('src', 'https://raw.githubusercontent.com/JokerMain668/ScoreboardController/main/img/flags/' + flagJSON[i]["img"] + '.svg');
+function reset(string) {
+    string.split(',').forEach(element => {
+        var name = $("#" + element);
+        switch(true) {
+            case name.hasClass('ui-checkboxradio') == true:
+                name.prop("checked", false).checkboxradio('refresh');
                 break;
-            } else {
-                $('#' + string + 'img').css('opacity', 0);
-            }
+            case name.hasClass('ui-spinner-input') == true:
+                $("#" + element).val(0);
+                break;
+            case name.hasClass('countryFlag') == true:
+                $("#" + element).removeAttr("src");
+                $("#" + element).css('opacity', 0);
+                break;
+            case name.is("label") == true:
+            case name.is("span") == true:
+                $("#" + element).html('');
+                if (element == 'p1ID') p1Player = null;
+                if (element == 'p2ID') p2Player = null;
+            default:
+                $("#" + element).val("");
+                break;
         }
-    }, 100);
+    });
 }
 
-function onIDChange(string) {
-    var player = playerList[$('#' + string + 'ID').html()];
+///////////////////////////
+/////// SWAP BUTTON ///////
+///////////////////////////
 
-    if (string == 'p1') p1Player = player;
-    else p2Player = player;
-
-    if (player != null) {
-        $('#' + string + 'Sponsor').val(player.sponsor);
-        $('#' + string + 'Flag').val(player.state);
-        $('#' + string + 'Twitter').val(player.twitter);
-        $('#' + string + 'Pronoun').val(player.pronoun);
-        flagChange(string + 'Flag');
-
-        if ($('#bSetPair').is(':checked')) {
-            var altPlayer = playerList[setsList[$('#' + string + 'ID').text()]];
-            if (altPlayer != null) {
-                var wrap = string == 'p1' ? 'p2' : 'p1';
-                $('#' + wrap + 'ID').html(altPlayer.id);
-                $('#' + wrap + 'Name').val(altPlayer.name);
-                $('#' + wrap + 'Sponsor').val(altPlayer.sponsor);
-                $('#' + wrap + 'Flag').val(altPlayer.state);
-                $('#' + wrap + 'Twitter').val(altPlayer.twitter);
-                $('#' + wrap + 'Pronoun').val(altPlayer.pronoun);
-                flagChange(wrap + 'Flag');
-
-                if (wrap == 'p1') p1Player = altPlayer;
-                else p2Player = altPlayer;
-            }
-        }
-    }
-}
-
-function onNameChange(string) {
-    if ($('#' + string + 'Name').val() != playerList[$('#' + string + 'ID').html()].name) {
-        $('#' + string + 'ID').html('');
-    }
-    // if (string == 'p1') p1Player = null;
-    // else p2Player = null;
-}
-
-//
-// Save //
-//
-
-function save() {
-    JSONtxt.p1Name = $("#p1Name").val();
-    JSONtxt.p2Name = $("#p2Name").val();
-    JSONtxt.p1Sponsor = $("#p1Sponsor").val();
-    JSONtxt.p2Sponsor = $("#p2Sponsor").val();
-    JSONtxt.p1Flag = $("#p1Flag").val();
-    JSONtxt.p2Flag = $("#p2Flag").val();
-    JSONtxt.p1Score = parseInt($("#p1Score").val());
-    JSONtxt.p2Score = parseInt($("#p2Score").val());
-    JSONtxt.p1LoserMark = $("#p1LoserMark").is(':checked');
-    JSONtxt.p2LoserMark = $("#p2LoserMark").is(':checked');
-    JSONtxt.p1ID = $("#p1ID").text();
-    JSONtxt.p2ID = $("#p2ID").text();
-    JSONtxt.p1Twitter = $("#p1Twitter").val();
-    JSONtxt.p2Twitter = $("#p2Twitter").val();
-    JSONtxt.p1Char = $("#p1Char").text();
-    JSONtxt.p2Char = $('#p2Char').text();
-    JSONtxt.p1Pronoun = $("#p1Pronoun").val();
-    JSONtxt.p2Pronoun = $("#p2Pronoun").val();
-    JSONtxt.round = $("#mText2 option:selected").text();
-    JSONtxt.Game = $("#game option:selected").text();
-    JSONtxt.EvtName = $("#mTxt1").val();
-    JSONtxt.p1Comm = $("#c1Name").val()
-    JSONtxt.p2Comm = $("#c2Name").val();
-    JSONtxt.bracketChecked = $("#bracketChecked").is(':checked');
-    JSONtxt.startggToken = $("#startggToken").val();
-    JSONtxt.startggID = $("#startggID").val();
-    JSONtxt.ChallongeAPI = $("#challongeAPI").val();
-    JSONtxt.ChallongeID = $("#challongeID").val();
-    JSONtxt.btmL = $("#btmL").val();
-    JSONtxt.btmR = $("#btmR").val();
-    JSONtxt.scaleVal = $('#ui-scaling-slider').slider('option', 'value');
-    JSONtxt.bScoreAuto = $('#bScoreAuto').is(':checked');
-    JSONtxt.bSetPair = $('#bSetPair').is(':checked');
-    
-    
-    localStorage.setItem("JSON", JSON.stringify(JSONtxt));
-    console.log(localStorage.getItem("JSON"));
-}
-
-//
-// Basic Button Functions //
-//
-
-function openDialog() {
-    $('#settings').dialog('open');
-}
-
-function expand() {
-    $('#lssc-panels').find('.accordion').accordion('option', 'active', 0);
-}
-
-function collapse() {
-    $('#lssc-panels').find('.accordion').accordion('option', 'active', false);
-}
-
-function reload() {
-    location.reload();
-}
-
-function swapVal(string1, string2) {
+function swap(string1, string2) {
     var p1Arr = string1.split(',');
     var p2Arr = string2.split(',');
     for (var i = 0; i < p1Arr.length; i++) {
@@ -553,12 +318,10 @@ function swapVal(string1, string2) {
                 $("#" + p2Arr[i]).html(p1txt);
                 break;
             case $("#" + p1Arr[i]).is("label") == true:
+            case $("#" + p1Arr[i]).is("span") == true:
                 var temp = $('#' + p1Arr[i]).text();
                 $('#' + p1Arr[i]).html($('#' + p2Arr[i]).text());
                 $('#' + p2Arr[i]).html(temp);
-                var temp = p1Player;
-                p1Player = p2Player
-                p2Player = temp;
                 break;
             default:
                 var temp = $("#" + p1Arr[i]).val();
@@ -569,250 +332,481 @@ function swapVal(string1, string2) {
     }
 }
 
+////////////////////////////////////
+// FLAG TEXTFIELD CHANGE FUNCTION //
+////////////////////////////////////
 
-function resetVal(string) {
-    string.split(',').forEach(element => {
-        var name = $("#" + element);
-        switch(true) {
-            case name.hasClass('ui-checkboxradio') == true:
-                name.prop("checked", false).checkboxradio('refresh');
-                break;
-            case name.hasClass('ui-spinner-input') == true:
-                $("#" + element).val(0);
-                break;
-            case name.hasClass('countryFlag') == true:
-                $("#" + element).removeAttr("src");
-                $("#" + element).css('opacity', 0);
-                break;
-            case name.is("label") == true:
-                $("#" + element).html('');
-                if (element == 'p1ID') p1Player = null;
-                if (element == 'p2ID') p2Player = null;
-            default:
-                $("#" + element).val("");
-                break;
-        }
-    });
-}
-
-//
-// DropDown Functions //
-//
-
-function toggleDD(string) {
-    document.getElementById(string).classList.toggle("show");
-}
-
-function filterFunction(dropdown, input) {
-    var input, filter, ul, li, a;
-    input = document.getElementById(input);
-    filter = input.value.toUpperCase();
-    div = document.getElementById(dropdown);
-    a = div.getElementsByTagName("a");
-    for (var i = 0; i < a.length; i++) {
-        txtValue = a[i].textContent || a[i].innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            a[i].style.display = "";
-        } else {
-            a[i].style.display = "none";
-        }
-    }
-}
-
-window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn') && !event.target.matches('.searchbar')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-            }
-        }
-    }
-}
-
-//
-// Set Pairing Function and Class
-//
-
-function fetchBracket() {
-    if ($('#bracketChecked').is(':checked')) {
-        var xhr = new XMLHttpRequest();
-        xhr.overrideMimeType('application/json');
-        xhr.open('GET', 'https://api.challonge.com/v1/tournaments/' + $('#challongeID').val() + '/matches.json?api_key=' + $('#challongeAPI').val())
-        xhr.send();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                setsList = {};
-                var data = JSON.parse(xhr.responseText);
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i]['match']['state'] == 'open') {
-                        var setData = data[i]['match'];
-                        var p1 = setData['player1_id'];
-                        var p2 = setData['player2_id'];
-                        setsList[p1] = p2;
-                        setsList[p2] = p1;
-                    }
-                }
-                //console.log(setsList);
-            }
-        }
+function onFlagChange(wrap) {
+    $("#" + wrap + "Flag").val($("#" + wrap + "Flag").val().toUpperCase());
+    const val = $('#' + wrap + "Flag").val();
+    if (countries.includes(val)) {
+        $("#" + wrap + "Flagimg").attr('src', "img/flags/" + val + ".svg");
+        $("#" + wrap + "Flagimg").css('opacity', 1);
     } else {
-        var xhr = new XMLHttpRequest();
-        xhr.overrideMimeType('application/json');
-        const parseQuery = {
-            query: `query {
-                event(id: ` + $('#startggID').val() + `) {
-                    sets(
-                        page: 1
-                        perPage: 500
-                    ) {
-                        nodes {
-                            slots {
-                                entrant {
-                                    participants {
-                                        id
-                                        gamerTag
-                                    }
-                                }
-                            }
-                            completedAt
-                        }
-                    }
-                }
-            }`
-        }
-        xhr.open('POST', 'https://api.start.gg/gql/alpha', true);
-        xhr.setRequestHeader('Authorization', 'Bearer ' + $('#startggToken').val());
-        xhr.setRequestHeader('Content-type', 'application/json');
-        xhr.send(JSON.stringify(parseQuery));
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                setsList = {};
-                var data = JSON.parse(xhr.responseText)['data']['event']['sets']['nodes'];
-                for (let i = 0; i < data.length; i++) {
-                    var setData = data[i];
-                    if (setData['completedAt'] == null && setData['slots'][0]['entrant'] != null && setData['slots'][1]['entrant'] != null) {
-                        var p1 = setData['slots'][0]['entrant']['participants'][0]['id'];
-                        var p2 = setData['slots'][1]['entrant']['participants'][0]['id'];
-                        setsList[p1] = p2
-                        setsList[p2] = p1;
-                    }
-                }
-                //console.log(setsList);
-            }
+        $("#" + wrap + "Flagimg").css('opacity', 0);
+    }
+    onNameChange(wrap);
+}
+
+function onStateChange(wrap) {
+    $("#" + wrap + "State").val($("#" + wrap + "State").val().toUpperCase());
+    onNameChange(wrap);
+}
+
+function onNameChange(wrap) {
+    $("#" + wrap + "ID").html("");
+}
+
+///////////////////////////
+////// RELOAD BUTTON //////
+///////////////////////////
+
+function reload() {
+    location.reload();
+}
+
+function save() {
+    JSONtxt.p1Name = $("#p1Name").val();
+    JSONtxt.p2Name = $("#p2Name").val();
+    JSONtxt.p1Sponsor = $("#p1Sponsor").val();
+    JSONtxt.p2Sponsor = $("#p2Sponsor").val();
+    JSONtxt.p1Score = parseInt($("#p1Score").val());
+    JSONtxt.p2Score = parseInt($("#p2Score").val());
+    JSONtxt.p1LoserMark = $("#p1LoserMark").is(":checked");
+    JSONtxt.p2LoserMark = $("#p2LoserMark").is(":checked");
+    JSONtxt.p1Flag = $("#p1Flag").val();
+    JSONtxt.p2Flag = $("#p2Flag").val();
+    JSONtxt.p1Twitter = $("#p1Twitter").val();
+    JSONtxt.p2Twitter = $("#p2Twitter").val();
+    JSONtxt.p1Pronoun = $("#p1Pronoun").val();
+    JSONtxt.p2Pronoun = $("#p2Pronoun").val();
+    JSONtxt.p1ID = $('#p1ID').text();
+    JSONtxt.p2ID = $('#p2ID').text();
+    JSONtxt.game = $("#game option:selected").val();
+    JSONtxt.round = $("#round").val();
+
+    localStorage.setItem("JSON", JSON.stringify(JSONtxt));
+    console.log(JSONtxt);
+}
+
+///////////////////////////
+//////// LOAD SAVE ////////
+///////////////////////////
+
+function load() {
+    $('.checkbox').checkboxradio();
+    
+    var data = JSON.parse(localStorage.getItem("JSON"));
+    var save = JSON.parse(localStorage.getItem("API"));
+    if (data !== null) {
+        $("#game").val(data.game);
+        $("#p1Sponsor").val(data.p1Sponsor);
+        $("#p1Name").val(data.p1Name);
+        $('#p1LoserMark').prop("checked", data.p1LoserMark);
+        $("#p2Sponsor").val(data.p2Sponsor);
+        $("#p2Name").val(data.p2Name);
+        $('#p2LoserMark').prop("checked", data.p2LoserMark);
+        $("#p1Score").val(data.p1Score);
+        $("#p2Score").val(data.p2Score);
+        $("#p1Flag").val(data.p1Flag);
+        $("#p2Flag").val(data.p2Flag);
+        onFlagChange('p1');
+        onFlagChange('p2');
+        $("#p1Twitter").val(data.p1Twitter);
+        $("#p2Twitter").val(data.p2Twitter);
+        $("#p1Pronoun").val(data.p1Pronoun);
+        $("#p2Pronoun").val(data.p2Pronoun);
+        $("#p1ID").html(data.p1ID);
+        $("#p2ID").html(data.p2ID);
+        $("#round").val(data.round);
+        onGameChange();
+    } else {
+        $("#game").val('sf6');
+    }
+
+    if (save !== null) {
+        $("#jsonURL").val(save.jsonURL);
+        $('#startggAuto').prop("checked", save.startggAuto);
+        $("#startggID").val(save.startggID);
+        $("#startggToken").val(save.startggToken);
+        $('#challongeAuto').prop("checked", save.challongeAuto);
+        $("#challongeID").val(save.challongeID);
+        $("#challongeAPI").val(save.challongeAPI);
+    }
+}
+
+///////////////////////////
+///// SETTING BUTTON //////
+///////////////////////////
+
+function openDialog() {
+    $('#settings').dialog('open');
+}
+
+///////////////////////////
+///// SET PAIR BUTTON /////
+///////////////////////////
+
+function toggleSetPair() {
+    if ($("#bSetPair").is(":checked")) {
+        $("#setPairedFieldset").css('opacity', 1);
+        if ($("#startggAuto").is(":checked")) fetchStartggBracketList(apiSave.startggID);
+        if ($("#challongeAuto").is(":checked")) fetchChallongeBracketList();
+    } else {
+        $("#setPairedFieldset").css('opacity', 0);
+        $("#setBracket").empty();
+        $("#setPool").empty();
+        $("#setPaired").empty();
+    }
+}
+
+function applySet() {
+    var set = sets[$("#setPaired option:selected").val()];
+    var p1 = set.player1;
+    var p2 = set.player2;
+
+    $("#p1Sponsor").val(p1.sponsor);
+    $("#p1Name").val(p1.name);
+    $("#p1Flag").val(p1.country);
+    $("#p1State").val(p1.state);
+    $("#p1Twitter").val(p1.twitter);
+    $("#p1Pronoun").val(p1.pronoun);
+
+    $("#p2Sponsor").val(p2.sponsor);
+    $("#p2Name").val(p2.name);
+    $("#p2Flag").val(p2.country);
+    $("#p2State").val(p2.state);
+    $("#p2Twitter").val(p2.twitter);
+    $("#p2Pronoun").val(p2.pronoun)
+
+    onFlagChange('p1');
+    onFlagChange('p2');
+    
+    $("#p1ID").html(p1.id);
+    $("#p2ID").html(p2.id);
+}
+
+///////////////////////////
+/////// AUTO TOGGLE ///////
+///////////////////////////
+
+function autoToggle(wrap) {
+    if (wrap == 'startgg' && $("#startggAuto").is(":checked") == true) {
+        $('#challongeAuto').prop("checked", false).checkboxradio('refresh');
+    }
+
+    if (wrap == 'challonge' && $("#challongeAuto").is(":checked") == true) {
+        $('#startggAuto').prop("checked", false).checkboxradio('refresh');
+    }
+}
+
+///////////////////////////
+// GAME CHANGE FUNCTION ///
+///////////////////////////
+
+function onGameChange() {
+    $('.charSelect').empty();
+    $.getJSON('json/' + $('#game option:selected').val() + '.json', function(result) {
+        $.each(result, function(i, field) {
+            $('.charSelect').append($('<li class="ui-state-default" value="' + field.Name + '"><img src="'+ field.img + '"></li>'));
+        });
+    });
+}
+
+function flagFullToValue(string) {
+    for(var i = 0; i < flags.length; i++) {
+        if (string == flags[i].full) {
+            return flags[i].value;
         }
     }
 }
 
-//
-// AutoComplete Function //
-//
+/////////////////////////////
+// BRACKET CHANGE FUNCTION //
+/////////////////////////////
 
-function autocomplete(inp, nameArr, subArr, idArr, idp) {
-    /*the autocomplete function takes two arguments,
-    the text field element and an array of possible autocompleted values:*/
-    var currentFocus;
-    /*execute a function when someone writes in the text field:*/
-    inp.addEventListener("input", function(e) {
-        var a, b, i, val = this.value;
-        /*close any already open lists of autocompleted values*/
-        closeAllLists();
-        if (!val) { return false;}
-        currentFocus = -1;
-        /*create a DIV element that will contain the items (values):*/
-        a = document.createElement("DIV");
-        a.setAttribute("id", this.id + "autocomplete-list");
-        a.setAttribute("class", "autocomplete-items");
-        /*append the DIV element as a child of the autocomplete container:*/
-        this.parentNode.appendChild(a);
-        /*for each item in the array...*/
-        for (i = 0; i < Math.min(nameArr.length, subArr.length); i++) {
-            var name = nameArr[i];
-            var prefix = subArr[i];
-            var id = '';
-            if (idArr != null) id = idArr[i];
-            /*check if the item starts with the same letters as the text field value:*/
-            if (name.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                /*create a DIV element for each matching element:*/
-                b = document.createElement("DIV");
-                /*make the matching letters bold:*/
-                b.innerHTML = "<strong>" + name.substr(0, val.length) + "</strong>";
-                b.innerHTML += name.substr(val.length);
-                /*insert a input field that will hold the current array item's value:*/
-                b.innerHTML += "<input type='hidden' value=\"" + name + "\">";
-                b.innerHTML += "<span style='text-align: right; font-size: 8rem'>" + prefix + "</span>";
-                b.innerHTML += "<span style='opacity: 0'>" + id + "</span>"
-                /*execute a function when someone clicks on the item value (DIV element):*/
-                b.addEventListener("click", function(e) {
-                    e.preventDefault();
-                    /*insert the value for the autocomplete text field:*/
-                    inp.value = this.getElementsByTagName("input")[0].value;
-                    if (idp != null) idp.innerHTML = this.getElementsByTagName("span")[1].innerHTML;
-                    /*close the list of autocompleted values,
-                    (or any other open lists of autocompleted values:*/
-                    closeAllLists();
-                    inp.blur();
-                });
-                a.appendChild(b);
+function onBracketChange() {
+    if (apiSave.startggAuto) fetchStartggBracketPools($("#setBracket option:selected").attr('id'));
+}
+
+function onPoolChange() {
+    if (apiSave.startggAuto) fetchStartggBracketSets($("#setPool option:selected").attr('id'));
+}
+
+///////////////////////////
+//// STARTGG FUNCTIONS ////
+///////////////////////////
+
+function fetchStartgg() {
+    const query = {
+        query: `{
+            tournament(slug: "` + apiSave.startggID + `") { participants(query: { page: 1 perPage: 200 }) { pageInfo { totalPages } } }
+        }`
+    }
+    $.ajax({
+        url: "https://api.start.gg/gql/alpha",
+        data: JSON.stringify(query),
+        method: "POST",
+        headers: {'Authorization': 'Bearer ' + apiSave.startggToken},
+        contentType: 'application/json',
+        statusCode: {
+            400: function() {
+                notify('fetchError', "Startgg API cannot be fetched", 'red');
             }
         }
-    });
-    /*execute a function presses a key on the keyboard:*/
-    inp.addEventListener("keydown", function(e) {
-        var x = document.getElementById(this.id + "autocomplete-list");
-        if (x) x = x.getElementsByTagName("div");
-        if (e.keyCode == 40) {
-            /*If the arrow DOWN key is pressed,
-            increase the currentFocus variable:*/
-            currentFocus++;
-            /*and and make the current item more visible:*/
-            addActive(x);
-        } else if (e.keyCode == 38) { //up
-            /*If the arrow UP key is pressed,
-            decrease the currentFocus variable:*/
-            currentFocus--;
-            /*and and make the current item more visible:*/
-            addActive(x);
-        } else if (e.keyCode == 13) {
-            /*If the ENTER key is pressed, prevent the form from being submitted,*/
-            //e.preventDefault();
-            if (currentFocus > -1) {
-                /*and simulate a click on the "active" item:*/
-                if (x) {
-                    x[currentFocus].click();
+    }).done(function(json) {
+        const pages = json['data']['tournament']['participants']['pageInfo']['totalPages'];
+        for (var i = 1; i <= pages; i++) {
+            fetchStartggPlayers(i);
+        }
+    })
+    
+}
+
+function fetchStartggPlayers(i) {
+    const parseQuery = {
+        query: `{
+            tournament(slug: "` + apiSave.startggID + `") { participants(query: { page: ` + i + ` perPage: 200 }) {
+                nodes { id prefix gamerTag user { discriminator genderPronoun authorizations( types: TWITTER) 
+                    { externalUsername } location { city state country } } } } } }`
+    };
+    $.ajax({
+        url: "https://api.start.gg/gql/alpha",
+        data: JSON.stringify(parseQuery),
+        method: "POST",
+        headers: {'Authorization': 'Bearer ' + apiSave.startggToken},
+        contentType: 'application/json',
+    }).done(function(json) {
+        $.each(json['data']['tournament']['participants']['nodes'], function(i, player) {
+            var id = player['id'];
+            var name = player['gamerTag'];
+            var sponsor = player['prefix'] == null ? "" : player['prefix'];
+            var flag = "";
+            var twitter = "";
+            var pronoun = "";
+            if (player['user']) {
+                pronoun = player['user']['genderPronoun'];
+                var location = player['user']['location'];
+                if (location) {
+                    flag = flagFullToValue([location["country"]]);
+                    state = location["state"];
+                }
+                var authorizations = player['user']['authorizations'];
+                if (authorizations) {
+                    twitter = authorizations[0]['externalUsername'];
                 }
             }
-        }
+            var val = {
+                id: id,
+                value: name,
+                sponsor: sponsor,
+                flag: flag,
+                state: state,
+                twitter: twitter,
+                pronoun: pronoun
+            }
+            playersArr.push(val);
+            var player = new Player(name, sponsor, flag, state, twitter, pronoun, id);
+            players[id] = player;
+        });
     });
-    function addActive(x) {
-        /*a function to classify an item as "active":*/
-        if (!x) return false;
-        /*start by removing the "active" class on all items:*/
-        removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = (x.length - 1);
-        /*add class "autocomplete-active":*/
-        x[currentFocus].classList.add("autocomplete-active");
+}
+
+function fetchStartggBracketList(id) {
+    const parseQuery = {
+        query: `{ tournament(slug: "` + id + `") { events ( filter: { type: 1 } ) { id name videogame { displayName name } } } }`
     }
-    function removeActive(x) {
-        /*a function to remove the "active" class from all autocomplete items:*/
-        for (var i = 0; i < x.length; i++) {
-            x[i].classList.remove("autocomplete-active");
-        }
-    }
-    function closeAllLists(elmnt) {
-        /*close all autocomplete lists in the document,
-        except the one passed as an argument:*/
-        var x = document.getElementsByClassName("autocomplete-items");
-        for (var i = 0; i < x.length; i++) {
-            if (elmnt != x[i] && elmnt != inp) {
-                x[i].parentNode.removeChild(x[i]);
+    $.ajax({
+        url: "https://api.start.gg/gql/alpha",
+        data: JSON.stringify(parseQuery),
+        method: "POST",
+        headers: {'Authorization': 'Bearer ' + apiSave.startggToken},
+        contentType: 'application/json',
+        statusCode: {
+            400: function() {
+                notify('setFetchError', "Fetch Startgg Bracket Failed", 'red');
             }
         }
-    }
-    /*execute a function when someone clicks in the document:*/
-    document.addEventListener("click", function (e) {
-        closeAllLists(e.target);
+    }).done(function(json) {
+        $("#setBracket").empty();
+        $.each(json['data']['tournament']['events'], function(i, event) {
+            $("#setBracket").append($('<option>', {
+                id: event['id'],
+                value: event['videogame']['name'],
+                text: event['name']
+            }));
+        });
+        onBracketChange();
     });
+}
+
+function fetchStartggBracketPools(id) {
+    const parseQuery = {
+        query: `{ event(id: ` + id + `) { phaseGroups { id displayIdentifier phase { name } } } }`
+    }
+    $.ajax({
+        url: "https://api.start.gg/gql/alpha",
+        data: JSON.stringify(parseQuery),
+        method: "POST",
+        headers: {'Authorization': 'Bearer ' + apiSave.startggToken},
+        contentType: 'application/json',
+        statusCode: {
+            400: function() {
+                notify('setFetchError', "Fetch Startgg Bracket Failed", 'red');
+            }
+        }
+    }).done(function(json) {
+        $("#setPool").empty();
+        $.each(json['data']['event']['phaseGroups'], function(i, pools) {
+            $("#setPool").append($('<option>', {
+                id: pools['id'],
+                text: pools['phase']['name'] + ': Pool ' + pools['displayIdentifier']
+            }));
+        });
+        onPoolChange();
+    })
+}
+
+function fetchStartggBracketSets(id) { 
+    const parseQuery = {
+        query: `{ phaseGroup(id: ` + id + `) { sets(page: 1, perPage: 150, filters: { state: [1,2] hideEmpty: true }) { nodes { 
+            id state fullRoundText slots { entrant { participants { id } } } } } } }`
+    }
+    $.ajax({
+        url: "https://api.start.gg/gql/alpha",
+        data: JSON.stringify(parseQuery),
+        method: "POST",
+        headers: {'Authorization': 'Bearer ' + apiSave.startggToken},
+        contentType: 'application/json',
+    }).done(function(json) {
+        $("#setPaired").empty();
+        sets = {};
+        $.each(json['data']['phaseGroup']['sets']['nodes'], function(i, set) {
+            if (set['slots'][0]['entrant'] != null && set['slots'][1]['entrant'] != null) {
+                var player1 = players[set['slots'][0]['entrant']['participants'][0]['id']];
+                var player2 = players[set['slots'][1]['entrant']['participants'][0]['id']];
+                const p1 = player1.fullTag();
+                const p2 = player2.fullTag();
+                $("#setPaired").append($('<option>', {
+                    value: set['id'],
+                    text: set["fullRoundText"] + ": " + p1 + " - " + p2
+                }));
+                var setClass = new Set(set["fullRoundText"], player1, player2);
+                sets[set['id']] = setClass;
+            }
+        });
+    });
+}
+
+function fetchChallongePlayers() {
+    $.getJSON("https://api.challonge.com/v1/tournaments/" + apiSave.challongeID + "/participants.json?api_key=" 
+    + apiSave.challongeAPI, function(result) {
+        $.each(result, function(i, player) {
+            var id = player['participant']['id'];
+            var name = player['participant']['display_name'];
+            var sponsor = "";
+            var flag = "";
+            var state = "";
+            var twitter = "";
+            var pronoun = "";
+            var id = player['participant']['id'];
+            var val = {
+                id: id,
+                value: name,
+                sponsor: sponsor,
+                flag: flag,
+                state: state,
+                twitter: twitter,
+                pronoun: pronoun
+            }
+            playersArr.push(val);
+            var player = new Player(name, sponsor, flag, state, twitter, pronoun, id);
+            players[id] = player;
+        });
+    });
+}
+
+function fetchChallongeBracketSets() {
+    $.getJSON("https://api.challonge.com/v1/tournaments/" + apiSave.challongeID + "/matches.json?api_key=" 
+    + apiSave.challongeAPI, function(result) {
+        $("#setPaired").empty();
+        sets = {};
+        $.each(result, function(i, set) {
+            if (set['match']['state'] == 'open') {
+                const player1 = players[set['match']['player1_id']];
+                const player2 = players[set['match']['player2_id']];
+                $("#setPaired").append($('<option>', {
+                    value: set['match']['id'],
+                    text: set["match"]['round'] + ": " + player1.fullTag() + " - " + player2.fullTag()
+                }));
+                sets[set['match']['id']] = new Set(round, player1, player2);
+            }
+        });
+    });
+}
+
+function fetchChallongeBracketList() {
+    $.getJSON("https://api.challonge.com/v1/tournaments/" + apiSave.challongeID + ".json?api_key=" 
+    + apiSave.challongeAPI, function(result) {
+        $("#setBracket").empty();
+        $("#setBracket").append($('<option>', {
+            text: result['tournament']['name']
+        }));
+        fetchChallongeBracketSets();
+    });
+}
+
+function fetch() {
+    if ($("#startggAuto").is(":checked") && $("#startggID").val() == "") {
+        notify('fetchError', 'Missing Startgg bracket ID', 'red');
+        return;
+    }
+    if ($("#startggAuto").is(":checked") && $("#startggToken").val() == "") {
+        notify('fetchError', 'Missing Startgg Token', 'red');
+        return;
+    }
+    if ($("#challongeAuto").is(":checked") && $("#challongeID").val() == "") {
+        notify('fetchError', 'Missing Challoge bracket ID', 'red');
+        return;
+    }
+    if ($("#challongeAuto").is(":checked") && $("#challongeAPI").val() == "") {
+        notify('fetchError', 'Missing Challonge API Token', 'red');
+        return;
+    }
+    apiSave.jsonAuto = $("#urlAuto").is(":checked");
+    apiSave.jsonUrl = $("#jsonURL").val()
+    apiSave.startggID = $("#startggID").val();
+    apiSave.startggToken = $("#startggToken").val();
+    apiSave.startggAuto = $("#startggAuto").is(":checked");
+    apiSave.challongeID = $("#challongeID").val();
+    apiSave.challongeAPI = $("#challongeAPI").val();
+    apiSave.challongeAuto = $("#challongeAuto").is(":checked");
+    localStorage.setItem("API", JSON.stringify(apiSave));
+    $("#fetchDescription").html("");
+
+    if (apiSave.startggAuto) {
+        playersArr = [];
+        players = {};
+        fetchStartgg();
+        $("#fetchDescription").html("Start.gg: " + apiSave.startggID);
+    } else if (apiSave.challongeAuto) {
+        playersArr = [];
+        players = {};
+        fetchChallongePlayers();
+        $("#fetchDescription").html("Challonge: " + apiSave.challongeID);
+    } else {
+        $("#fetchDescription").html("");
+    }
+    $("#bSetPair:checkbox").prop("checked", false).checkboxradio('refresh');
+    toggleSetPair();
+    TFautocomplete("p1");
+    TFautocomplete("p2");
+}
+
+function notify(wrap, message, color) {
+    $("#" + wrap).html(message);
+    setTimeout(() => {
+        $("#" + wrap).css('color', color);
+        $("#" + wrap).html("");
+    }, 2500);
 }

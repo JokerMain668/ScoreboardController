@@ -1,0 +1,29 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created using Krita: https://krita.org -->
+<svg xmlns="http://www.w3.org/2000/svg" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:krita="http://krita.org/namespaces/svg/krita"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    width="512pt"
+    height="512pt"
+    viewBox="0 0 144 144">
+<defs/>
+<path id="shape0" transform="matrix(0.099 0 0 0.1 -1.11022302462516e-16 2.85882428840978e-15)" fill="#ce1126" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0 0L1454.55 0L1454.55 1440L0 1440Z" sodipodi:nodetypes="ccccc"/><path id="shape01" transform="matrix(0.099 0 0 0.1 -1.77635683940025e-15 0)" fill="#002b7f" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0 0L727.273 0L727.273 720L0 720Z" sodipodi:nodetypes="ccccc"/><g id="group0" transform="matrix(0.0810999922986684 0 0 0.0819191841400691 -22.3919944550413 6.5095442650879)" fill="none">
+  <g id="group1" transform="matrix(160 0 0 160 720 30)" fill="none">
+   <path id="a" transform="translate(-0.5, 0)" fill="#ffffff" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0.5 0L0.809 0.951L0 0.363L1 0.363L0.191 0.951Z" sodipodi:nodetypes="cccccc"/>
+  </g>
+  <g id="group2" transform="matrix(160 0 0 160 500 210)" fill="none">
+   <path id="a1" transform="translate(-0.5, 0)" fill="#ffffff" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0.5 0L0.809 0.951L0 0.363L1 0.363L0.191 0.951Z" sodipodi:nodetypes="cccccc"/>
+  </g>
+  <g id="group3" transform="matrix(150 0 0 150 945 180)" fill="none">
+   <path id="a2" transform="translate(-0.5, 7.105427357601e-15)" fill="#ffffff" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0.5 0L0.809 0.951L0 0.363L1 0.363L0.191 0.951Z" sodipodi:nodetypes="cccccc"/>
+  </g>
+  <g id="group4" transform="matrix(100 0 0 100 830 364.894)" fill="none">
+   <path id="a3" transform="translate(-0.499999999999972, 0)" fill="#ffffff" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0.5 0L0.809 0.951L0 0.363L1 0.363L0.191 0.951Z" sodipodi:nodetypes="cccccc"/>
+  </g>
+  <g id="group5" transform="matrix(200 0 0 200 720 499.789)" fill="none">
+   <path id="a4" transform="translate(-0.5, 0)" fill="#ffffff" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0.5 0L0.809 0.951L0 0.363L1 0.363L0.191 0.951Z" sodipodi:nodetypes="cccccc"/>
+  </g>
+ </g>
+</svg>
