@@ -99,7 +99,7 @@ function fetchFirst() {
         fetchfirstComplete++;
     });
 
-    $.getJSON('json/country-flags.json', function(result) {
+    $.getJSON('https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/json/country-flags.json', function(result) {
         fetchfirstComplete++;
         $.each(result, function(k, v) {
             var val = {
@@ -111,7 +111,7 @@ function fetchFirst() {
         });
     });
     
-    $.getJSON('json/games.json', function(result) {
+    $.getJSON('https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/json/games.json', function(result) {
         var old = false;
         var optgroup = $("<optgroup label='Old Titles'>");
         $.each(result, function(i, field) {
@@ -210,7 +210,8 @@ function TFautocomplete(wrap) {
             $("#" + wrap + "Flagimg").css("opacity", 0);
 
             if (countries.includes(ui.item.flag)) {
-                $("#" + wrap + "Flagimg").attr("src", "img/flags/" + ui.item.flag + ".svg");
+                $("#" + wrap + "Flagimg").attr("src", "https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/img/flags/" + 
+                    ui.item.flag + ".svg");
                 $("#" + wrap + "Flagimg").css("opacity", 1);
             }
 
@@ -223,13 +224,16 @@ function TFautocomplete(wrap) {
         if (item.flag) {
             if (item.state && countriesWithStates.includes(item.flag)) {
                 return $("<li>")
-                    .append("<div><img src='img/flags/" + item.flag + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 105rem'>" +
-                    "<img src='img/flags/" + item.flag + "/" + item.state + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" 
+                    .append("<div><img src='https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/img/flags/" + 
+                    item.flag + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 105rem'>" +
+                    "<img src='https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/img/flags/" + 
+                    item.flag + "/" + item.state + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" 
                     + item.value + "<br><span style='font-size: 8rem'>" + item.sponsor + "</span></div>")
                     .appendTo(ul);
             }
             return $("<li>")
-                .append("<div><img src='img/flags/" + item.flag + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" 
+                .append("<div><img src='https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/img/flags/" + 
+                item.flag + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" 
                 + item.value + "<br><span style='font-size: 8rem'>" + item.sponsor + "</span></div>")
                 .appendTo(ul);
         } else {
@@ -244,12 +248,15 @@ function TFautocomplete(wrap) {
         source: flags,
         select: function(event, ui) {
             $("#" + wrap + "Flag").val(ui.item.value);
-            $("#" + wrap + "Flagimg").attr("src", "img/flags/" + ui.item.value + ".svg");
+            $("#" + wrap + "Flagimg").attr("src", "https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/img/flags/" 
+            + ui.item.value + ".svg");
             $("#" + wrap + "Flagimg").css("opacity", 1);
         }
     }).autocomplete("instance")._renderItem = function(ul, item) {
         return $("<li>")
-            .append("<div><img src='img/flags/" + item.value + ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" + item.value + "<br><span style='font-size: 8rem'>" + item.full + "</span></div>")
+            .append("<div><img src='https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/img/flags/" + item.value + 
+            ".svg' style='position: absolute; top: 5rem; width: 15rem; left: 120rem'>" + item.value + "<br><span style='font-size: 8rem'>" + 
+            item.full + "</span></div>")
             .appendTo(ul);
     };
 }
@@ -340,7 +347,7 @@ function onFlagChange(wrap) {
     $("#" + wrap + "Flag").val($("#" + wrap + "Flag").val().toUpperCase());
     const val = $('#' + wrap + "Flag").val();
     if (countries.includes(val)) {
-        $("#" + wrap + "Flagimg").attr('src', "img/flags/" + val + ".svg");
+        $("#" + wrap + "Flagimg").attr('src', "https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/img/flags/" + val + ".svg");
         $("#" + wrap + "Flagimg").css('opacity', 1);
     } else {
         $("#" + wrap + "Flagimg").css('opacity', 0);
@@ -506,7 +513,7 @@ function autoToggle(wrap) {
 
 function onGameChange() {
     $('.charSelect').empty();
-    $.getJSON('json/' + $('#game option:selected').val() + '.json', function(result) {
+    $.getJSON('https://raw.githubusercontent.com/JokerMain668/ScoreboardController/v1.0/json/' + $('#game option:selected').val() + '.json', function(result) {
         $.each(result, function(i, field) {
             $('.charSelect').append($('<li class="ui-state-default" value="' + field.Name + '"><img src="'+ field.img + '"></li>'));
         });
